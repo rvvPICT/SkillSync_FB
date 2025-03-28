@@ -9,10 +9,10 @@ export const addProjectController = async (req, res) => {
     try {
         console.log("Add Project request received:", req.body);
         const { userId } = req.params;
-        const { userId: bodyUserId } = req.body;  // Destructure userId from body
+        // const { userId: bodyUserId } = req.body;  // Destructure userId from body
 
-        const finalUserId = userId || bodyUserId;
-        console.log("Received userId in backend:", finalUserId);
+        // const finalUserId = userId || bodyUserId;
+        console.log("Received userId in backend:", userId);
         const { 
             title,
             description,
@@ -27,7 +27,7 @@ export const addProjectController = async (req, res) => {
         if (!userId) {
             return res.status(400).json({ message: "User ID is required to create a project." });
         }
-        const user = await User.findById(finalUserId);
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }
@@ -41,8 +41,8 @@ export const addProjectController = async (req, res) => {
             isPublic,
             teamSize,
             deadline,
-            owner: finalUserId,
-            members: [finalUserId],
+            owner: userId,
+            members: [userId],
         });
 
         await newProject.save();

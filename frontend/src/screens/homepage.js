@@ -21,25 +21,48 @@ import {
 
 const Homepage = ({ route }) => {
 
+	const { userId } = route.params || {};
+
+  // Add a check to prevent errors if userId is undefined
+  useEffect(() => {
+    const getProjects = async () => {
+      if (!userId) {
+        console.error("No userId provided");
+        return;
+      }
+      // Rest of the existing code...
+    };
+    getProjects();
+  }, [activeTab, userId]);
+
+
 	const [activeTab, setActiveTab] = useState("myProjects");
 	const [projects, setProjects] = useState([]);
 	const [loading, setLoading] = useState(true);
-	const [userId, setUserId] = useState(null);
+	// const [userId, setUserId] = useState(null);
 
-	useEffect(() => {
-		const getUserData = async () => {
-			try {
-				console.log("Fetching user with ID:", route?.params?.userId);
-				const userData = await fetchUserById(route?.params?.userId); 
-				if (!userData) throw new Error("User not found");
-				setUserId(userData._id);
+	// useEffect(() => {
+	// 	const getUserData = async () => {
+	// 		try {
+	// 			const paramUserId = route?.params?.userId || route?.params?.id;
+	// 			if (!paramUserId) {
+	// 				console.error("No user ID found in route params");
+	// 				return;
+	// 			}
+	// 			console.log("Fetching user with ID:", paramUserId);
+	// 			const userData = await fetchUserById(paramUserId); 
+	// 			if (!userData) {
+	// 				console.error("User data not found for ID:", paramUserId);
+	// 				return;
+	// 			}
+	// 			setUserId(userData._id);
 
-			} catch (error) {
-					console.error("Error fetching user data:", error);
-			}
-		};
-		getUserData();
-	}, []);
+	// 		} catch (error) {
+	// 				console.error("Error fetching user data:", error);
+	// 		}
+	// 	};
+	// 	getUserData();
+	// }, []);
 
 	useEffect(() => {
 		const getProjects = async () => {
@@ -77,7 +100,7 @@ const Homepage = ({ route }) => {
 
       <View style={[styles.upperbar]}>
 				
-				<Navbar/>
+				<Navbar userId={userId}/>
 
 				{/* <View>	// testing navigation
 					<Text>Heyy, {username}</Text>
@@ -111,7 +134,7 @@ const Homepage = ({ route }) => {
 				</View>
 			</View>
 
-			<ProjectBox projectType={activeTab} projects={projects}/>
+			<ProjectBox projectType={activeTab} projects={projects} userId={userId}/>
 
 			<Footer page={"home"} userId={userId}/>
 

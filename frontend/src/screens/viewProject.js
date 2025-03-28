@@ -15,13 +15,13 @@ import {
 
 
 const ViewProject = ({ route, navigation }) => {
-  const { projectType, project } = route.params; // Getting the project data passed from the previous screen
+  const { projectType, project, userId } = route.params; // Getting the project data passed from the previous screen
   const navBarText = projectType === 'myProjects' ? "My Project" : "Public Project";
 
 
   const applied = () => {
     Alert.alert("Applied!");
-    navigation.navigate("Home");
+    navigation.navigate("Home", { userId });
   };
 
   return (
@@ -34,13 +34,21 @@ const ViewProject = ({ route, navigation }) => {
         <Text style={styles.description}>{project.description}</Text>
 
         <Text style={styles.detailLabel}>Skills Required:</Text>
-        <Text style={styles.details}>{project.requiredskills.join(", ")}</Text>
+        {/* <Text style={styles.details}>{project.requiredskills.join(", ")}</Text> */}
+
+        <Text style={styles.details}>
+          {project.requiredSkills.map((skill, index) => (
+            <Text key={index}>
+              {skill}{index < project.requiredSkills.length - 1 ? ", " : ""}
+            </Text>
+          ))}
+        </Text>
 
         <Text style={styles.detailLabel}>Total Members:</Text>
-        <Text style={styles.details}>{project.totalMembers}</Text>
+        <Text style={styles.details}>{project.teamSize}</Text>
 
         <Text style={styles.detailLabel}>Available Slots:</Text>
-        <Text style={styles.details}>{project.availableSlots}</Text>
+        <Text style={styles.details}>{project.teamSize - project.members.length}</Text>
 
         <Text style={styles.detailLabel}>Deadline for Project:</Text>
         <Text style={styles.details}>{project.deadline}</Text>

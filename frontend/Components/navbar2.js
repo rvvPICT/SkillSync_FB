@@ -2,8 +2,6 @@ import React from 'react';
 import { View, Text, Image, Pressable, StyleSheet, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-
-
 const Navbar2 = (props) => {  
 
   const { title, userId } = props;

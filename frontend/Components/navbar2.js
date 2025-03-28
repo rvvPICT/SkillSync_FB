@@ -4,7 +4,10 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 
 
 
-const Navbar2 = ({ title }) => {  
+const Navbar2 = (props) => {  
+
+  const { title, userId } = props;
+
   const navigation = useNavigation();
   const route = useRoute();
 
@@ -32,7 +35,7 @@ const Navbar2 = ({ title }) => {
   const handleBackPress = () => {
     if (route.name === "EditProfile") showConfirmationAlert();
     else if (primaryScreens.includes(route.name)) {
-      navigation.navigate("Home"); // Navigate to Home if in a special screen
+      navigation.navigate("Home", { userId }); // Navigate to Home if in a special screen
     } else {
       navigation.goBack(); // Otherwise, go back
     }

@@ -30,7 +30,7 @@ const Homepage = ({ route }) => {
 		const getUserData = async () => {
 			try {
 				console.log("Fetching user with ID:", route?.params?.userId);
-				const userData = await fetchUserById(route?.params?.userId || "67e23a06c8848e7bb58fbc31"); 
+				const userData = await fetchUserById(route?.params?.userId); 
 				if (!userData) throw new Error("User not found");
 				setUserId(userData._id);
 

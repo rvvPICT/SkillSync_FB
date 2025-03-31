@@ -3,7 +3,7 @@ dependencies to install:
 npm install jsonwebtoken
 npm install bcryptjs
 npm install @react-native-async-storage/async-storage
-
+npx expo install @react-native-firebase/app
 
 # HTTP Status Codes Guide for REST APIs
 

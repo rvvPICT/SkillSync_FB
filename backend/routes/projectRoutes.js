@@ -1,6 +1,6 @@
 import express from 'express';
 import Project from "../models/project.js";
-
+import mongoose from 'mongoose';
 const router = express.Router();
 
 router.get("/", async(req, res) => {

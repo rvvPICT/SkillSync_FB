@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import emailRoutes from './routes/emailRoutes.js' ;
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use("/api/projects", projectRoutes);
 app.use("/api/users", userRoutes);
+app.use('/api/email' , emailRoutes) ;
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {

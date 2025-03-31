@@ -17,7 +17,8 @@ import {
 } from "react-native";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
-import Carousel from "react-native-snap-carousel";
+import Carousel from "react-native-snap-carousel-v4";
+
 import Navbar2 from "../../Components/navbar2";
 import Footer from "../../Components/footer";
 
@@ -200,6 +201,7 @@ const EditProfile = ({ route }) => {
                       firstItem={selectedAvatarIndex}
                       onSnapToItem={(index) => setSelectedAvatarIndex(index)}
                     />
+
 
                     <TouchableOpacity style={styles.Btn} onPress={handleChooseAvatar} disabled={loading}>
                       {loading ? <ActivityIndicator color="#FFF" /> : <Text style={styles.buttonText}>Choose</Text>}

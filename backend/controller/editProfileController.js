@@ -8,7 +8,7 @@ export const editProfController = async (req, res) => {
 		console.log("Edit Profile Request Received: ", req.body);
 
 		const { userId } = req.params;
-		const { fullName, username, avatar, phone, location, experienceLevel, linkedin, skills, lookingForTeammates, availableForHackathons, bio } = req.body;
+		const { fullName, username, avatar, phone, gender, location, experienceLevel, linkedin, skills, lookingForTeammates, availableForHackathons, bio } = req.body;
 
 		if (!userId) return res.status(400).json({ message: "User ID is required" });
 
@@ -19,6 +19,7 @@ export const editProfController = async (req, res) => {
 				username,
 				avatar,
 				phone,
+				gender,
 				location,
 				experienceLevel,
 				linkedin,
@@ -27,7 +28,7 @@ export const editProfController = async (req, res) => {
 				availableForHackathons,
 				bio,
 			},
-			{ new: true } // Returns the updated document
+			{ new: true }
 		);
 
 		if (!updatedUser) return res.status(404).json({ message: "User not found" });

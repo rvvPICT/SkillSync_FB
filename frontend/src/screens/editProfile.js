@@ -18,6 +18,8 @@ import {
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Carousel from "react-native-snap-carousel";
+import { Picker } from "@react-native-picker/picker";
+
 import Navbar2 from "../../Components/navbar2";
 import Footer from "../../Components/footer";
 
@@ -48,6 +50,7 @@ const EditProfile = ({ route }) => {
   const [profilePic, setProfilePic] = useState(avatarList[1]); // Default avatar
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
+  const [gender, setGender] = useState("");
   const [avatar, setAvatar] = useState(1);
   const [email, setEmail] = useState("user@example.com"); // Read-only
   const [phone, setPhone] = useState("");
@@ -75,6 +78,7 @@ const EditProfile = ({ route }) => {
           setUsername(user.username);
           setEmail(user.email);
           setPhone(user.phone || "");
+          setGender(user.gender || "");
           setLocation(user.location || "");
           setSkills(user.skills || []);
           setExperienceLevel(user.experienceLevel || "");
@@ -104,6 +108,7 @@ const EditProfile = ({ route }) => {
         username,
         avatar,
         phone,
+        gender,
         location,
         experienceLevel,
         linkedin,
@@ -123,12 +128,6 @@ const EditProfile = ({ route }) => {
       } else {
         Alert.alert("Edit Profile Failed", response.error);
       }
-      // if (response.error) {
-      //   Alert.alert("Edit Profile Failed", response.error);
-      // } else {
-      //   Alert.alert("Success", "Profile updated successfully!");
-      //   navigation.goBack();
-      // }
     } catch (error) {
         console.error("Edit Profile Failed:", error);
         Alert.alert("Edit Profile Failed", "An unexpected error occurred. Please try again.");
@@ -233,6 +232,21 @@ const EditProfile = ({ route }) => {
 
             <Text>Phone Number</Text>
             <TextInput style={styles.input} value={phone} onChangeText={setPhone} />
+
+            <Text>Gender</Text>
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={gender}
+                onValueChange={(itemValue) => setGender(itemValue)}
+                style={styles.picker}
+              >
+                <Picker.Item label="Select Gender" value="" />
+                <Picker.Item label="Male" value="Male" />
+                <Picker.Item label="Female" value="Female" />
+                <Picker.Item label="Other" value="Other" />
+              </Picker>
+            </View>
+
 
             <Text>Location</Text>
             <TextInput style={styles.input} value={location} onChangeText={setLocation} />
@@ -377,7 +391,19 @@ const styles = StyleSheet.create({
     marginRight: 5,
     marginBottom: 5,
     alignItems: "center",
-  },  
+  }, 
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: "#7164B4",
+    borderRadius: 8,
+    marginBottom: 10,
+    backgroundColor: "#FFF",
+  },
+  picker: {
+    height: 50,
+    width: "100%",
+  },
+  
 });
 
 export default EditProfile;

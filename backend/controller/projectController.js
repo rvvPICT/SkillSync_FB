@@ -74,4 +74,22 @@ export const getMyProjectsController = async (req, res) => {
         console.error("Error fetching user projects:", error);
         res.status(500).json({ message: "Error fetching user projects", error: error.message });
     }
-} ;
+};
+
+export const getMyPublicProjectsController = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        console.log("Received userId in backend:", userId);
+
+        const userProjects = await Project.find({ members: new mongoose.Types.ObjectId(userId), isPublic: true });
+
+        if (!userProjects.length) {
+            return res.status(404).json({ message: "No projects found for this user" });
+        }
+        res.json(userProjects);
+
+    } catch (error) {
+        console.error("Error fetching user projects:", error);
+        res.status(500).json({ message: "Error fetching user projects", error: error.message });
+    }
+};

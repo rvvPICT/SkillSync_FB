@@ -15,29 +15,20 @@ import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/nativ
 import { fetchUserById } from '../src/services/users_api';
 
 
-const Footer = (props) => {
-
-	const {page, userId} = props;
-
+const Footer = ({ route }) => {
+	const {page, userId, otherId=null} = route.params;
 	const navigation = useNavigation();
-	const route = useRoute();
-
 	const [currentFooterIcon, setCurrentFooterIcon] = useState(page);
 
 	useFocusEffect(
 		React.useCallback(() => {
-			const routeName = route.name; // Get current route name
-	
+			const routeName = route.name;
 			if (routeName === "Home") setCurrentFooterIcon("home");
 			else if (routeName === "Search") setCurrentFooterIcon("search");
 			else if (routeName === "QnA") setCurrentFooterIcon("qna");
 			else if (routeName === "ViewProfile") setCurrentFooterIcon("profile");
-	
 		}, [route.name])
 	);
-
-
-	
 
   return (
 		<View style={[styles.footer]}>
@@ -61,7 +52,7 @@ const Footer = (props) => {
 			</Pressable>
 			<Pressable
 				onPress={() => {
-					if (currentFooterIcon != "search") navigation.navigate("Search");
+					if (currentFooterIcon != "search") navigation.navigate("Search", { userId });
 				}}
 				style={({ pressed }) => [
 					{opacity: pressed ? 0.5 : 1.0},
@@ -79,7 +70,7 @@ const Footer = (props) => {
 			</Pressable>
 			<Pressable
 				onPress={() => {
-					if (currentFooterIcon != "qna") navigation.navigate("QnA");
+					if (currentFooterIcon != "qna") navigation.navigate("QnA", {  userId });
 				}}
 				style={({ pressed }) => [
 					{opacity: pressed ? 0.5 : 1.0},
@@ -97,7 +88,7 @@ const Footer = (props) => {
 			</Pressable>
 			<Pressable
 				onPress={() => {
-					if (currentFooterIcon != "profile") navigation.navigate("ViewProfile", { userId });
+					if (currentFooterIcon != "profile") navigation.navigate("ViewProfile", { userId, otherId });
 				}}
 				style={({ pressed }) => [
 					{opacity: pressed ? 0.5 : 1.0},

@@ -137,8 +137,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Navbar2 from '../../Components/navbar2';
 import Footer from '../../Components/footer';
 
-const QnAPage = () => {
+const QnAPage = ({ route }) => {
   const navigation = useNavigation();
+  const { userId } = route.params;
 
   const users = [
     { id: 1, name: "Veda", question: "If you could travel to any country for free, where would you go and why?", profilePicture: require('../../assets/img/notificationPage/manImg.jpg') },
@@ -187,7 +188,7 @@ const QnAPage = () => {
         <Icon name="add" size={30} color="#7164b4" />  
       </TouchableOpacity>
 
-      <Footer page={"qna"} />
+      <Footer route={{ params: { page: "qna", userId } }} />
     </SafeAreaView>
   );
 };

@@ -87,3 +87,14 @@ export const fetchUserProjects = async (userId) => {
   }
 };
 
+export const fetchUserPublicProjects = async (userId) => {
+  try {
+    console.log("Fetching projects for user:", userId);
+    const response = await axios.get(`${API_URL}/my-public-projects/${userId}`);
+    console.log("API response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user projects:", error.response?.data || error.message);
+    return [];
+  }
+}

@@ -79,7 +79,7 @@ const Footer = (props) => {
 			</Pressable>
 			<Pressable
 				onPress={() => {
-					if (currentFooterIcon != "qna") navigation.navigate("QnA");
+					if (currentFooterIcon != "qna") navigation.navigate("QnA",{ userId });
 				}}
 				style={({ pressed }) => [
 					{opacity: pressed ? 0.5 : 1.0},

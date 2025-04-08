@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import qnaRoutes from "./routes/qnaRoutes.js";
 
 dotenv.config();
 
@@ -17,10 +18,11 @@ app.use(express.json());
 
 app.use("/api/projects", projectRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/qna", qnaRoutes);
+//app.use("/api/answer", answerRoutes);
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     console.log("MONGO_URI:", process.env.MONGO_URI);
 });
-

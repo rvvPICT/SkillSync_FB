@@ -8,29 +8,50 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Navbar2 from '../../Components/navbar2';
+import { postQuestion } from '../services/qna_api';
 
-const AskQuestionPage = () => {
+const AskQuestionPage = ({route}) => {
   const navigation = useNavigation();
-  const [question, setQuestion] = useState("");
-  const [selectedDomain, setSelectedDomain] = useState(null);
+  //const route = useRoute();
+  const userId = route.params?.userId; // Retrieve userId from navigation params
 
-  // List of domains
+  console.log("Received User ID:", userId); // Debugging
+
+  const [question, setQuestion] = useState("");
+  const [domain, setDomain] = useState(null);
+
   const domains = ["Artificial Intelligence", "Blockchain", "Finance", "Retail", "Healthcare"];
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!userId) {
+      Alert.alert("Error", "User ID is missing. Please try again.");
+      return;
+    }
     if (question.trim() === "") {
       alert("Please enter a question.");
       return;
     }
-    if (!selectedDomain) {
+    if (!domain) {
       alert("Please select a domain.");
       return;
     }
-    
-    Alert.alert(`Question submitted successfully!\nDomain: ${selectedDomain}`);
-    navigation.goBack(); // Go back to QnA page
+    try {
+      const questionData = { userId, question, domain };
+      const response = await postQuestion(questionData);
+      console.log("Added Question:", response);
+      
+      if (!response.error) {
+        Alert.alert("Success",`Question added successfully!\nDomain: ${domain}`);
+        navigation.navigate("QnA", { forceRefresh: Date.now() });
+      } else {
+        Alert.alert("Add question Failed:", response.error);
+      }
+    } catch (error) {
+      console.error("Add question Failed:", error);
+      Alert.alert("Add question Failed:", "An unexpected error occurred. Please try again.");
+    }
   };
 
   return (
@@ -39,20 +60,14 @@ const AskQuestionPage = () => {
       <View style={styles.container}>
         <Text style={styles.label}>Select a Domain:</Text>
         <View style={styles.domainContainer}>
-          {domains.map((domain, index) => (
+          {domains.map((item, index) => (
             <TouchableOpacity
               key={index}
-              style={[
-                styles.domainButton,
-                selectedDomain === domain && styles.selectedDomain
-              ]}
-              onPress={() => setSelectedDomain(domain)}
+              style={[styles.domainButton, domain === item && styles.selectedDomain]}
+              onPress={() => setDomain(item)}
             >
-              <Text style={[
-                styles.domainText,
-                selectedDomain === domain && styles.selectedDomainText
-              ]}>
-                {domain}
+              <Text style={[styles.domainText, domain === item && styles.selectedDomainText]}>
+                {item}
               </Text>
             </TouchableOpacity>
           ))}

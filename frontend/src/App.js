@@ -93,7 +93,7 @@ function App() {
           options={{headerShown:false}}
         />
          <Stack.Screen
-          name='AskQuestion'
+          name='AskQuestionPage'
           component={AskQuestionPage}
           options={{headerShown:false}}
         />

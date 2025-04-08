@@ -15,15 +15,67 @@ const AnswerPage = () => {
   const navigation = useNavigation();
   const { user } = route.params;
   const [answer, setAnswer] = useState("");
+  const userId = route.params?.userId; // Retrieve userId from navigation params
 
-  const handleSubmit = () => {
+  console.log("Received User ID:", userId); // Debugging
+
+  const handleSubmit = async() => {
+    if (!userId) {
+      Alert.alert("Error", "User ID is missing. Please try again.");
+      return;
+    }
     if (answer.trim() === "") {
       alert("Please enter an answer.");
       return;
     }
-    alert("Answer submitted successfully!");
-    navigation.goBack(); // Go back to QnA page
+    // alert("Answer submitted successfully!");
+    // navigation.goBack(); // Go back to QnA page
+    try {
+      const response = await postAnswer(userId, answer);
+      console.log("Added Question:", response);
+      
+      if (!response.error) {
+        Alert.alert("Success",`Answer added successfully!`);
+        navigation.navigate("QnA", { forceRefresh: Date.now() });
+      } else {
+        Alert.alert("Add answer Failed:", response.error);
+      }
+    } catch (error) {
+      console.error("Add answer Failed:", error);
+      Alert.alert("Add answer Failed:", "An unexpected error occurred. Please try again.");
+    }
   };
+
+  // const handleSubmit = async () => {
+  //     if (!userId) {
+  //       Alert.alert("Error", "User ID is missing. Please try again.");
+  //       return;
+  //     }
+  //     if (question.trim() === "") {
+  //       alert("Please enter a question.");
+  //       return;
+  //     }
+  //     if (!domain) {
+  //       alert("Please select a domain.");
+  //       return;
+  //     }
+  //     try {
+  //       const questionData = { question, domain };
+  //       const response = await postQuestion(userId, questionData);
+  //       console.log("Added Question:", response);
+        
+  //       if (!response.error) {
+  //         Alert.alert("Success",`Question added successfully!\nDomain: ${domain}`);
+  //         navigation.navigate("QnA", { forceRefresh: Date.now() });
+  //       } else {
+  //         Alert.alert("Add question Failed:", response.error);
+  //       }
+  //     } catch (error) {
+  //       console.error("Add question Failed:", error);
+  //       Alert.alert("Add question Failed:", "An unexpected error occurred. Please try again.");
+  //     }
+  //   };
+  
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>

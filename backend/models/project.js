@@ -33,6 +33,7 @@ const projectSchema = new mongoose.Schema({
     availableSlots: {type: Number, default: 0, min: 0},
     deadline: {type: Date, required: true},
     isPublic: {type: Boolean, default: true},
+    applicants: [{user:{type:mongoose.Schema.Types.ObjectId , ref: "User"} , status : {type:String , enum:['pending' , 'approved' , 'rejected'],default:'pending'}}]
 }, { timestamps: true });
 
 const Project = mongoose.model("Project", projectSchema);

@@ -30,7 +30,7 @@ const Signup = (props) => {
             console.log("Signup Failed", response.error);
         } else {
             Alert.alert("Signup Successful", "You can now log in.");
-            props.navigation.navigate("SignIn"); // Navigate to SignIn screen
+            props.navigation.navigate("Home", { userId });
         }
     } catch (error) {
         Alert.alert("Error", "Something went wrong. Please try again.");

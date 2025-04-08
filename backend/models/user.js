@@ -60,6 +60,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    gender: {
+        type: String,
+        enum: ["Male", "Female", "Other"],
+    },
     avatar: { type: Number, default: 0 },
     skills: { type: [String], default: [] },
     linkedin: { type: String },

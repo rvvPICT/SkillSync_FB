@@ -13,7 +13,9 @@ import {
 	Animated
 } from 'react-native'
 
-const Navbar = () => {
+const Navbar = (props) => {
+
+	const { userId } = props;
 
 	const navigation = useNavigation();
 
@@ -27,7 +29,7 @@ const Navbar = () => {
 			<View style={[styles.logos2]}>
 				<Pressable 
 					onPress={() => {
-						navigation.navigate("AddProjectScreen");
+						navigation.navigate("AddProjectScreen", { userId });
 					}}
 					style={({ pressed }) => [
 						{opacity: pressed ? 0.5 : 1.0},

@@ -20,12 +20,32 @@ import { fetchUserById } from "../services/users_api";
 
 const ViewProfile = ({ route }) => {
   const navigation = useNavigation();
-  const userId = route?.params?.userId || "YOUR_DEFAULT_USER_ID"; // Replace with actual user ID from params or authentication
+  // const userId = route?.params?.userId || "YOUR_DEFAULT_USER_ID"; // Replace with actual user ID from params or authentication
   console.log("Received userId:", userId);
   const [error, setError] = useState(null);
 
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+	const [userId, setUserId] = useState(null);
+
+	useEffect(() => {
+		const getUserData = async () => {
+			try {
+				console.log("Fetching user with ID:", route?.params?.userId);
+				const userData = await fetchUserById(route?.params?.userId); 
+				if (!userData) throw new Error("User not found");
+				setUserId(userData._id);
+        setUserData(userData);
+
+			} catch (error) {
+					console.error("Error fetching user data:", error);
+          setError("Failed to load user data");
+      } finally {
+          setLoading(false);
+      }
+		};
+		getUserData();
+	}, [userId, route.params?.forceRefresh]);
 
   const avatarImages = {
     0: require("../../assets/img/avatars/avatar1.png"),
@@ -35,24 +55,24 @@ const ViewProfile = ({ route }) => {
     4: require("../../assets/img/avatars/avatar5.png"),
   };
 
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        setLoading(true);
-        setError(null); // Reset error state
-        const user = await fetchUserById(userId);
-        if (user) setUserData(user);
-        else setError("User not found");
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        setError("Failed to load user data");
-      } finally {
-        setLoading(false);
-      }
-    }
+  // useEffect(() => {
+  //   const loadUser = async () => {
+  //     try {
+  //       setLoading(true);
+  //       setError(null); // Reset error state
+  //       const user = await fetchUserById(userId);
+  //       if (user) setUserData(user);
+  //       else setError("User not found");
+  //     } catch (error) {
+  //       console.error("Error fetching user:", error);
+  //       setError("Failed to load user data");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
 
-    loadUser();
-  }, [userId, route.params?.forceRefresh]);
+  //   loadUser();
+  // }, [userId, route.params?.forceRefresh]);
 
   const handleLinkPress = async () => {
     const url = userData.linkedin;
@@ -80,7 +100,7 @@ const ViewProfile = ({ route }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <Navbar2 title="Profile" />
+      <Navbar2 title="Profile" userId={userId}/>
       
       <ScrollView contentContainerStyle={{ padding: 15 }}>
         <View style={styles.headerContainer}>
@@ -112,7 +132,7 @@ const ViewProfile = ({ route }) => {
         </TouchableOpacity>
       </ScrollView>
 
-      <Footer page="profile" />
+      <Footer page="profile" userId={userId}/>
     </SafeAreaView>
   );
 };

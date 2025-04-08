@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { 
   StyleSheet,
@@ -14,11 +14,14 @@ import {
 // import your_projectList from './ProjectsList/yourProjectList';
 // import public_projectList from './ProjectsList/publicProjectList';
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-const ProjectBox = ({ projectType, projects }) => {
+const ProjectBox = (props) => {
+	// const { projectType, projects } = route;
+	const {projectType, projects, userId} = props;
 
-	const navigation = useNavigation(); // Get navigation object
+	const navigation = useNavigation();
+	const route = useRoute();
 
 	const truncateText = (text, wordlimit) => {
 		const words = text.split(" ");
@@ -31,13 +34,16 @@ const ProjectBox = ({ projectType, projects }) => {
 	const projectList = projects || [];	
 	const emptyList = projectList.length === 0;
 
+	// const [userId, setUserId] = useState(null);
+	
+
 
 	const renderItem = ({item}) => {
 		return(
 			<View style={[styles.box]}>
 				<View style={[styles.titlebox]}>
 					<Text style={[styles.titleText]}>{item.title}</Text>
-					<TouchableOpacity onPress={() => navigation.navigate("ViewProject", { projectType, project: item})}>
+					<TouchableOpacity onPress={() => navigation.navigate("ViewProject", { projectType, project: item, userId})}>
 						<Text style={[styles.rendermoreiconText]}>{'>'}</Text>
 					</TouchableOpacity>
 				</View>
@@ -66,7 +72,7 @@ const ProjectBox = ({ projectType, projects }) => {
 				<SafeAreaView style={{ flex:1 }}>
 					<View style={styles.noProContainer}>
 						<Text style={styles.noProText}>Looks like you haven’t added any projects yet.</Text>
-						<TouchableOpacity style={styles.addBtn} onPress={() => {navigation.navigate("AddProjectScreen");}}>
+						<TouchableOpacity style={styles.addBtn} onPress={() => {navigation.navigate("AddProjectScreen", { userId });}}>
 							<Text style={styles.buttonText}>Get started now!</Text>
 						</TouchableOpacity>
 					</View>

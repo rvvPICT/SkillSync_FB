@@ -8,6 +8,13 @@ import { fetchAllUsers, fetchAllMentors } from "../services/users_api";
 import { fetchPublicProjects } from "../services/projects_api";
 
 const manImg = require('../../assets/img/notificationPage/manImg.jpg');
+const avatarImages = {
+  0: require("../../assets/img/avatars/avatar1.png"),
+  1: require("../../assets/img/avatars/avatar2.png"),
+  2: require("../../assets/img/avatars/avatar3.png"),
+  3: require("../../assets/img/avatars/avatar4.png"),
+  4: require("../../assets/img/avatars/avatar5.png"),
+};
 
 // const mentors = [
 //   { id: "1", name: "Vedika", image: require('../../assets/img/notificationPage/manImg.jpg'), rating: 4.5, skills: ["AI", "ML"] },
@@ -80,16 +87,33 @@ const SearchPage = ({ navigation }) => {
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
-      {item.avatar && <Image source={manImg} style={styles.image} />}
-      {item.username && <Text style={styles.cardText}>{item.username}</Text>}
-      {item.title && <Text style={styles.cardText}>{item.title}</Text>}
-      {item.domain && <Text style={styles.subText}>{item.domain}</Text>}
-      {item.rating && (
+      {(teamMembers.includes(item) || mentors.includes(item)) && 
+        <View style={styles.profilePicContainer}>
+          <Image
+            source={avatarImages[item.avatar % 5]}
+            style={styles.profilePic}
+          />
+        </View>
+      }
+      {
+        (teamMembers.includes(item) || mentors.includes(item)) && 
+        <Text style={styles.cardText}>{item.username}</Text>
+      }
+      {
+        projects.includes(item) && 
+        <Text style={styles.cardText}>{item.title}</Text>
+      }
+      {
+        projects.includes(item) && 
+        <Text style={styles.subText}>{item.domain}</Text>
+      }
+      {
+        (teamMembers.includes(item) || mentors.includes(item)) && 
         <View style={styles.ratingContainer}>
           <FontAwesome name="star" size={16} color="gold" />
           <Text style={styles.ratingText}>{item.rating}</Text>
         </View>
-      )}
+      }
     </View>
   );
 
@@ -184,6 +208,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "gray",
     textAlign: "center",
+    marginTop: 10,
   },
   ratingContainer: {
     flexDirection: "row",
@@ -194,5 +219,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     marginLeft: 5,
+  },
+  profilePicContainer: {
+    width: 86, // Slightly larger than the image to create spacing
+    height: 86,
+    borderRadius: 43, // Half of width/height to maintain circular shape
+    borderWidth: 2,
+    borderColor: "#7164B4",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  profilePic: {
+    width: 75,
+    height: 80,
+    borderRadius: 40,
   },
 });

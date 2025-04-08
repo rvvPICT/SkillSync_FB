@@ -1,189 +1,4 @@
-// import React, { useState, useEffect } from "react";
-// import { SafeAreaView, View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from "react-native";
-// import Navbar2 from "../../Components/navbar2";
-// import Footer from "../../Components/footer";
-
-// import { useNavigation } from "@react-navigation/native";
-
-// import { fetchAllUsers, fetchAllMentors } from "../services/users_api";
-// import { fetchPublicProjects } from "../services/projects_api";
-
-// const skills = ["AI", "ML", "Web Dev", "React", "Blockchain", "Python", "Django", "Cloud", "AWS", "Cybersecurity"];
-// const domains = ["Artificial Intelligence", "Retail", "Healthcare", "Blockchain", "Finance"];
-
-// const mentors = [
-//   { id: "1", name: "Vedika", skills: ["AI", "ML"] },
-//   { id: "2", name: "Sanika", skills: ["Web Dev", "React"] },
-//   { id: "3", name: "Rahul", skills: ["Blockchain"] },
-// ];
-
-// const projects = [
-//   { id: "1", name: "AI Chatbot", domain: "Artificial Intelligence" },
-//   { id: "2", name: "E-commerce App", domain: "Retail" },
-// ];
-
-// const SearchFilters = ({ route }) => {
-//   const { type } = route.params;
-//   const loggedinId = route.params.userId;
-//   const navigation = useNavigation();
-
-//   const [search, setSearch] = useState("");
-//   const [selectedFilters, setSelectedFilters] = useState([]);
-//   const [data, setData] = useState("");
-//   const [teamMembers, setTeamMembers] = useState([]);
-//   const [mentors, setMentors] = useState([]);
-//   const [projects, setProjects] = useState([]);
-// 	const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     const getData = async () => {
-//       setLoading(true);
-//       try {
-//         const teamData = await fetchAllUsers(); // Fetch team members
-//         const mentorData = await fetchAllMentors(); // Fetch mentors
-//         const projectData = await fetchPublicProjects(); // Fetch projects
-
-//         console.log("Fetched team members:", teamData);
-//         console.log("Fetched mentors:", mentorData);
-//         console.log("Fetched projects:", projectData);
-
-//         setTeamMembers(teamData);
-//         setMentors(mentorData);
-//         setProjects(projectData);
-//       } catch (error) {
-//         console.error("Error fetching data:", error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-//     getData();
-//   }, []);
-
-
-//   // if (type === "projects") setData(projects);
-//   // else if (type === "mentors") setData(mentors);
-//   // else setData(teamMembers);
-
-//     // const data = type === "project" ? projects : mentors;
-
-//   useEffect(() => {
-//     if (type === "project") setData(projects);
-//     else if (type === "mentors") setData(mentors);
-//     else setData(teamMembers);
-//   }, [type, projects, mentors, teamMembers]);
-//   const filterOptions = type === "project" ? domains : skills;
-
-  
-//   const toggleFilter = (filter) => {
-//     setSelectedFilters(prev =>
-//       prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]
-//     );
-//   };
-
-//   const filteredData = data.filter(item =>
-//     (search === "" || item.name.toLowerCase().includes(search.toLowerCase())) &&
-//     (selectedFilters.length === 0 || (type === "project" ? selectedFilters.includes(item.domain) : item.skills.some(skill => selectedFilters.includes(skill))))
-//   );
-
-//   if (loading) {
-//     return (
-//       <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-//         <Text>Loading...</Text>
-//       </SafeAreaView>
-//     );
-//   }
-
-//   return (
-//     <SafeAreaView style={{ flex: 1 }}>
-//       {/* <Navbar2 title={`Search for ${type === "project" ? "Project" : "Members"}`} /> */}
-//       <Navbar2 route={{ params: { title: `Search for ${type === "project" ? "Project" : "Members"}`, userId: loggedinId } }} />
-//       <View style={styles.container}>
-//         <TextInput
-//           style={styles.searchBar}
-//           placeholder="Search..."
-//           value={search}
-//           onChangeText={setSearch}
-//         />
-//         <View style={styles.filterContainer}>
-//           {filterOptions.map((filter, index) => (
-//             <TouchableOpacity
-//               key={index}
-//               style={[styles.filterButton, selectedFilters.includes(filter) && styles.selectedFilter]}
-//               onPress={() => toggleFilter(filter)}
-//             >
-//               <Text style={styles.filterText}>{filter}</Text>
-//             </TouchableOpacity>
-//           ))}
-//         </View>
-//         <FlatList
-//           data={filteredData}
-//           // keyExtractor={(item) => item.id}
-//           keyExtractor={(item, index) => item.id?.toString() || index.toString()}
-//           renderItem={({ item }) => (
-//             <View style={styles.card}>
-//               <Text style={styles.cardText}>{item.name}</Text>
-//             </View>
-//           )}
-//         />
-//       </View>
-//       {/* <Footer page={"search"} /> */}
-//       <Footer route={{ params: { page: "search", userId: loggedinId } }} />
-//     </SafeAreaView>
-//   );
-// };
-
-// export default SearchFilters;
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     padding: 15,
-//   },
-//   searchBar: {
-//     height: 40,
-//     borderColor: "gray",
-//     borderWidth: 1,
-//     borderRadius: 10,
-//     paddingLeft: 10,
-//     marginBottom: 15,
-//   },
-//   filterContainer: {
-//     flexDirection: "row",
-//     flexWrap: "wrap",
-//     marginBottom: 10,
-//   },
-//   filterButton: {
-//     padding: 10,
-//     borderRadius: 20,
-//     borderWidth: 1,
-//     borderColor: "#9370DB",
-//     marginRight: 10,
-//     marginBottom: 10,
-//   },
-//   selectedFilter: {
-//     backgroundColor: "#7164b4",
-//   },
-//   filterText: {
-//     color: "black",
-//   },
-//   card: {
-//     padding: 20,
-//     backgroundColor: "#E6E6FA",
-//     borderRadius: 10,
-//     marginBottom: 10,
-//   },
-//   cardText: {
-//     fontSize: 18,
-//     fontWeight: "bold",
-//   },
-// });
-
-
-
-
-
-// import React, { useState, useEffect } from "react";
-// import { SafeAreaView, View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+// import { SafeAreaView, View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
 // import Navbar2 from "../../Components/navbar2";
 // import Footer from "../../Components/footer";
 // import { useNavigation } from "@react-navigation/native";
@@ -192,20 +7,34 @@
 // import { fetchPublicProjects } from "../services/projects_api";
 
 // const SearchFilters = ({ route }) => {
-//   const { type, fromProject=false, projectId=null } = route.params;
-//   const loggedinId = route.params.userId;
 //   const navigation = useNavigation();
-
-//   useEffect(() => {
-//     console.log("SearchFilters received userId:", loggedinId);
-//   }, [loggedinId]);
-
 //   const [search, setSearch] = useState("");
 //   const [selectedFilters, setSelectedFilters] = useState([]);
 //   const [teamMembers, setTeamMembers] = useState([]);
 //   const [mentors, setMentors] = useState([]);
 //   const [projects, setProjects] = useState([]);
 //   const [loading, setLoading] = useState(true);
+  
+//   // Safely extract parameters with fallbacks
+//   const { 
+//     type = "member", 
+//     fromProject = false, 
+//     projectId = null,
+//     userId = null 
+//   } = route.params || {};
+  
+//   // Get userId from route params
+//   const loggedinId = userId;
+
+//   // Debug logging
+//   useEffect(() => {
+//     console.log("📱 SearchFilters - Received route params:", route.params);
+//     console.log("📱 SearchFilters - Using userId:", loggedinId);
+    
+//     if (!loggedinId) {
+//       console.warn("⚠️ SearchFilters - No userId received!");
+//     }
+//   }, [route.params, loggedinId]);
 
 //   // Determine what filter options to show based on type
 //   const filterOptions = type === "project" ? 
@@ -216,6 +45,12 @@
 //     const getData = async () => {
 //       setLoading(true);
 //       try {
+//         if (!loggedinId) {
+//           console.warn("⚠️ Cannot fetch data without userId");
+//           setLoading(false);
+//           return;
+//         }
+
 //         if (type === "project") {
 //           const projectData = await fetchPublicProjects();
 //           setProjects(projectData);
@@ -233,7 +68,7 @@
 //       }
 //     };
 //     getData();
-//   }, [type]);
+//   }, [type, loggedinId]);
 
 //   const toggleFilter = (filter) => {
 //     setSelectedFilters(prev =>
@@ -254,10 +89,11 @@
     
 //     return currentData.filter(item => {
 //       // First check if item matches search text
-//       const nameMatch = item.name?.toLowerCase().includes(search.toLowerCase()) || 
-//                        item.title?.toLowerCase().includes(search.toLowerCase()) ||
-//                        item.username?.toLowerCase().includes(search.toLowerCase()) ||
-//                        item.fullName?.toLowerCase().includes(search.toLowerCase());
+//       const nameMatch = 
+//         (item.name?.toLowerCase() || "").includes(search.toLowerCase()) || 
+//         (item.title?.toLowerCase() || "").includes(search.toLowerCase()) ||
+//         (item.username?.toLowerCase() || "").includes(search.toLowerCase()) ||
+//         (item.fullName?.toLowerCase() || "").includes(search.toLowerCase());
       
 //       if (!nameMatch) return false;
       
@@ -275,6 +111,7 @@
 //   };
 
 //   const handleSendInvite = (otherId) => {
+//     // Ensure userId is included in navigation params
 //     navigation.navigate('ViewProfile', { 
 //       userId: loggedinId, 
 //       otherId, 
@@ -283,32 +120,6 @@
 //       projectId: projectId 
 //     });
 //   };
-
-//   // const renderItem = ({ item }) => {
-//   //   const displayName = item.name || item.title || item.username || item.fullName || "Unknown";
-    
-//   //   return (
-//   //     <TouchableOpacity 
-//   //       style={styles.card}
-//   //       onPress={() => {
-//   //         // Navigate to details page based on item type
-//   //         if (type === "project") {
-//   //           navigation.navigate("ProjectDetails", { projectId: item._id });
-//   //         } else {
-//   //           navigation.navigate("UserProfile", { userId: item._id });
-//   //         }
-//   //       }}
-//   //     >
-//   //       <Text style={styles.cardText}>{displayName}</Text>
-//   //       {type === "project" && item.domain && (
-//   //         <Text style={styles.cardSubText}>Domain: {item.domain}</Text>
-//   //       )}
-//   //       {(type === "mentors" || type === "members") && item.skills && (
-//   //         <Text style={styles.cardSubText}>Skills: {item.skills.join(", ")}</Text>
-//   //       )}
-//   //     </TouchableOpacity>
-//   //   );
-//   // };
 
 //   const renderItem = ({ item }) => {
 //     const displayName = item.name || item.title || item.username || item.fullName || "Unknown";
@@ -321,7 +132,7 @@
 //             <Text style={styles.cardSubText}>Domain: {item.domain}</Text>
 //           )}
 //           {(type === "mentors" || type === "member") && item.skills && (
-//             <Text style={styles.cardSubText}>Skills: {item.skills.join(", ")}</Text>
+//             <Text style={styles.cardSubText}>Skills: {item.skills?.join(", ")}</Text>
 //           )}
 //         </View>
         
@@ -353,7 +164,7 @@
 //           </TouchableOpacity>
           
 //           {/* Send invite button - only show for users when fromProject is true */}
-//           {fromProject && projectId  && (
+//           {fromProject && projectId && (
 //             <TouchableOpacity 
 //               style={styles.inviteBtn}
 //               onPress={() => handleSendInvite(item._id)}
@@ -368,11 +179,25 @@
 
 //   const searchTitle = `Search for ${type === "project" ? "Projects" : type === "mentors" ? "Mentors" : "Team Members"}`;
 
+//   // If we don't have a userId, show an error state
+//   if (!loggedinId) {
+//     return (
+//       <SafeAreaView style={{ flex: 1 }}>
+//         <View style={styles.errorContainer}>
+//           <Text style={styles.errorText}>Missing user ID. Please try again.</Text>
+//           <TouchableOpacity 
+//             style={styles.errorButton}
+//             onPress={() => navigation.navigate("Search")}
+//           >
+//             <Text style={styles.errorButtonText}>Go to Search</Text>
+//           </TouchableOpacity>
+//         </View>
+//       </SafeAreaView>
+//     );
+//   }
+
 //   return (
 //     <SafeAreaView style={{ flex: 1 }}>
-//       {/* <Navbar2 route={{ params: { title: `Search for ${type === "project" ? "Projects" : type === "mentors" ? "Mentors" : "Team Members"}`, userId: loggedinId } }} /> */}
-
-//       {/* <Navbar2 route={{ params: { title: searchTitle, userId: loggedinId } }} /> */}
 //       <Navbar2 route={{ 
 //         params: { 
 //           title: searchTitle, 
@@ -493,6 +318,36 @@
 //     shadowOpacity: 0.22,
 //     shadowRadius: 2.22,
 //   },
+//   cardContent: {
+//     marginBottom: 10,
+//   },
+//   cardActions: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     marginTop: 10,
+//   },
+//   viewProfileBtn: {
+//     backgroundColor: "#7164b4",
+//     paddingVertical: 8,
+//     paddingHorizontal: 16,
+//     borderRadius: 8,
+//     flex: 1,
+//     marginRight: 5,
+//     alignItems: "center",
+//   },
+//   inviteBtn: {
+//     backgroundColor: "#4CAF50",
+//     paddingVertical: 8,
+//     paddingHorizontal: 16,
+//     borderRadius: 8,
+//     flex: 1,
+//     marginLeft: 5,
+//     alignItems: "center",
+//   },
+//   btnText: {
+//     color: "white",
+//     fontWeight: "500",
+//   },
 //   cardText: {
 //     fontSize: 18,
 //     fontWeight: "bold",
@@ -512,6 +367,29 @@
 //     fontSize: 16,
 //     color: "#666",
 //   },
+//   errorContainer: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     padding: 20,
+//   },
+//   errorText: {
+//     fontSize: 18,
+//     color: "#e53935",
+//     marginBottom: 20,
+//     textAlign: "center",
+//   },
+//   errorButton: {
+//     backgroundColor: "#7164b4",
+//     paddingVertical: 12,
+//     paddingHorizontal: 24,
+//     borderRadius: 8,
+//   },
+//   errorButtonText: {
+//     color: "white",
+//     fontSize: 16,
+//     fontWeight: "500",
+//   },
 //   emptyContainer: {
 //     padding: 20,
 //     alignItems: "center",
@@ -526,13 +404,13 @@
 // export default SearchFilters;
 
 
-
-
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
 import Navbar2 from "../../Components/navbar2";
 import Footer from "../../Components/footer";
 import { useNavigation } from "@react-navigation/native";
+import SkillsAccordion from "../../Components/Skills_and_Domains/SkillsAccordion.js";
+import DomainAccordion from "../../Components/Skills_and_Domains/DomainAccordian.js";
 
 import { fetchAllUsers, fetchAllMentors, fetchAllUsersExceptLoggedIn } from "../services/users_api";
 import { fetchPublicProjects } from "../services/projects_api";
@@ -541,6 +419,7 @@ const SearchFilters = ({ route }) => {
   const navigation = useNavigation();
   const [search, setSearch] = useState("");
   const [selectedFilters, setSelectedFilters] = useState([]);
+  const [selectedDomain, setSelectedDomain] = useState("");
   const [teamMembers, setTeamMembers] = useState([]);
   const [mentors, setMentors] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -566,11 +445,6 @@ const SearchFilters = ({ route }) => {
       console.warn("⚠️ SearchFilters - No userId received!");
     }
   }, [route.params, loggedinId]);
-
-  // Determine what filter options to show based on type
-  const filterOptions = type === "project" ? 
-    ["Artificial Intelligence", "Retail", "Healthcare", "Blockchain", "Finance"] : 
-    ["AI", "ML", "Web Dev", "React", "Blockchain", "Python", "Django", "Cloud", "AWS", "Cybersecurity"];
 
   useEffect(() => {
     const getData = async () => {
@@ -601,10 +475,14 @@ const SearchFilters = ({ route }) => {
     getData();
   }, [type, loggedinId]);
 
-  const toggleFilter = (filter) => {
-    setSelectedFilters(prev =>
-      prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]
-    );
+  // Handle skills selection from SkillsAccordion
+  const handleSkillsChange = (skills) => {
+    setSelectedFilters(skills);
+  };
+
+  // Handle domain selection from DomainAccordion
+  const handleDomainChange = (domain) => {
+    setSelectedDomain(domain);
   };
 
   // Get current data based on type
@@ -629,13 +507,12 @@ const SearchFilters = ({ route }) => {
       if (!nameMatch) return false;
       
       // If no filters selected, return all items that match text search
-      if (selectedFilters.length === 0) return true;
-      
-      // Check if item matches selected filters
       if (type === "project") {
-        return selectedFilters.includes(item.domain);
+        if (!selectedDomain) return true;
+        return item.domain === selectedDomain;
       } else {
         // For users/mentors, check if they have any of the selected skills
+        if (selectedFilters.length === 0) return true;
         return item.skills?.some(skill => selectedFilters.includes(skill));
       }
     });
@@ -746,28 +623,24 @@ const SearchFilters = ({ route }) => {
         />
         
         <Text style={styles.filterLabel}>
-          Filter by {type === "project" ? "Domain" : "Skills"}:
+          {type === "project" ? "Filter by Domain:" : "Filter by Skills:"}
         </Text>
         
-        <View style={styles.filterContainer}>
-          {filterOptions.map((filter, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.filterButton, 
-                selectedFilters.includes(filter) && styles.selectedFilter
-              ]}
-              onPress={() => toggleFilter(filter)}
-            >
-              <Text style={[
-                styles.filterText,
-                selectedFilters.includes(filter) && styles.selectedFilterText
-              ]}>
-                {filter}
-              </Text>
-            </TouchableOpacity>
-          ))}
+        <View style={styles.accordionContainer}>
+          {type === "project" ? (
+            <DomainAccordion 
+              initialDomain={selectedDomain}
+              onDomainChange={handleDomainChange}
+            />
+          ) : (
+            <SkillsAccordion 
+              initialSkills={selectedFilters}
+              onSkillsChange={handleSkillsChange}
+            />
+          )}
         </View>
+        
+        <Text style={styles.resultLabel}>Results:</Text>
         
         {loading ? (
           <View style={styles.loaderContainer}>
@@ -814,29 +687,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
-  filterContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginBottom: 15,
-  },
-  filterButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#9370DB",
-    marginRight: 10,
+  resultLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 15,
     marginBottom: 10,
   },
-  selectedFilter: {
-    backgroundColor: "#9370DB",
-  },
-  filterText: {
-    color: "#7164b4",
-    fontWeight: "500",
-  },
-  selectedFilterText: {
-    color: "white",
+  accordionContainer: {
+    marginBottom: 10,
+    maxHeight: 300, // Limit height to prevent taking too much space
   },
   card: {
     padding: 20,

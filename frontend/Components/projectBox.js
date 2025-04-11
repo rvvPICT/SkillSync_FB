@@ -11,17 +11,12 @@ import {
 	ScrollView
 } from 'react-native'
 
-// import your_projectList from './ProjectsList/yourProjectList';
-// import public_projectList from './ProjectsList/publicProjectList';
-
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-const ProjectBox = (props) => {
-	// const { projectType, projects } = route;
-	const {projectType, projects, userId} = props;
+const ProjectBox = ({ route }) => {
+	const {projectType, projects, userId} = route.params;
 
 	const navigation = useNavigation();
-	const route = useRoute();
 
 	const truncateText = (text, wordlimit) => {
 		const words = text.split(" ");
@@ -34,19 +29,16 @@ const ProjectBox = (props) => {
 	const projectList = projects || [];	
 	const emptyList = projectList.length === 0;
 
-	// const [userId, setUserId] = useState(null);
-	
-
-
 	const renderItem = ({item}) => {
 		return(
 			<View style={[styles.box]}>
-				<View style={[styles.titlebox]}>
+				<TouchableOpacity 
+					style={[styles.titlebox]}
+					onPress={() => navigation.navigate("ViewProject", { projectType, project: item, userId})}
+				>
 					<Text style={[styles.titleText]}>{item.title}</Text>
-					<TouchableOpacity onPress={() => navigation.navigate("ViewProject", { projectType, project: item, userId})}>
-						<Text style={[styles.rendermoreiconText]}>{'>'}</Text>
-					</TouchableOpacity>
-				</View>
+					<Text style={[styles.rendermoreiconText]}>{'>'}</Text>
+				</TouchableOpacity>
 
 				<View style={[styles.descbox]}>
 					<Text style={[styles.descText]}>{truncateText(item.description, 20)}</Text>
@@ -79,10 +71,6 @@ const ProjectBox = (props) => {
 				</SafeAreaView>
 			)}
 		</>
-		
-
-		
-		
   )
 }
 

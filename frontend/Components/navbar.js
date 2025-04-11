@@ -43,7 +43,7 @@ const Navbar = (props) => {
 				</Pressable>
 				<Pressable
 					onPress={() => {
-						navigation.navigate("Notification");
+						navigation.navigate("Notification" ,{userId});
 					}}
 					style={({ pressed }) => [
 						{opacity: pressed ? 0.5 : 1.0},

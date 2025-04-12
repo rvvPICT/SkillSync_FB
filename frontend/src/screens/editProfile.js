@@ -463,6 +463,7 @@ const EditProfile = ({ route }) => {
   const [linkedin, setLinkedin] = useState("");
   const [lookingForTeammates, setLookingForTeammates] = useState(false);
   const [availableForHackathons, setAvailableForHackathons] = useState(false);
+  const [isMentor, setIsMentor] = useState(false);
   const [bio, setBio] = useState("");
   const [avatarModalVisible, setAvatarModalVisible] = useState(false);
   const [selectedAvatarIndex, setSelectedAvatarIndex] = useState(1);
@@ -487,6 +488,7 @@ const EditProfile = ({ route }) => {
           setLinkedin(user.linkedin || "");
           setLookingForTeammates(user.lookingForTeammates || false);
           setAvailableForHackathons(user.availableForHackathons || false);
+          setIsMentor(user.isMentor || false);
           setBio(user.bio || "");
           setProfilePic(avatarList[user.avatar] || avatarList[1]); // Default fallback
           setAvatar(user.avatar ?? 1);
@@ -517,6 +519,7 @@ const EditProfile = ({ route }) => {
         skills, // This will now contain the updated skills from SkillsAccordion
         lookingForTeammates,
         availableForHackathons,
+        isMentor,
         bio,
       };
       
@@ -669,6 +672,11 @@ const EditProfile = ({ route }) => {
               <View style={styles.switchCont}>
                 <Text>Available for Hackathons?</Text>
                 <Switch value={availableForHackathons} onValueChange={setAvailableForHackathons} />
+              </View>
+
+              <View style={styles.switchCont}>
+                <Text>Ready for Mentorship?</Text>
+                <Switch value={isMentor} onValueChange={setIsMentor} />
               </View>
 
               <Text style={{marginTop:"5%"}}>Bio</Text>

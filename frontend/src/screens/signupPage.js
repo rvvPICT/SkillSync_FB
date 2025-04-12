@@ -3,9 +3,11 @@ import { Alert } from "react-native";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, SafeAreaView } from "react-native";
 
 import { signup_post } from "../services/users_api";
+import { useNavigation } from "@react-navigation/native";
 
 
-const Signup = (props) => {
+const Signup = ({ route }) => {
+  const navigation = useNavigation();
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,9 +31,9 @@ const Signup = (props) => {
             Alert.alert("Signup Failed", response.error);
             console.log("Signup Failed", response.error);
         } else {
-            Alert.alert("Signup Successful", "You can now log in.");
-            props.navigation.navigate("Home", { userId });
-        }
+            Alert.alert("Signup Successful");
+            navigation.navigate("Home", { userId: response.user._id });
+          }
     } catch (error) {
         Alert.alert("Error", "Something went wrong. Please try again.");
     }
@@ -39,7 +41,7 @@ const Signup = (props) => {
 
 
   const goToSignIn = () => {
-    props.navigation.navigate("SignIn");
+    navigation.navigate("SignIn");
   }
 
   return (

@@ -585,7 +585,7 @@ const SearchFilters = ({ route }) => {
     );
   };
 
-  const searchTitle = `Search for ${type === "project" ? "Projects" : type === "mentors" ? "Mentors" : "Team Members"}`;
+  const searchTitle = `Search for ${type === "project" ? "\nProjects" : type === "mentors" ? "\nMentors" : "\nTeam Members"}`;
 
   // If we don't have a userId, show an error state
   if (!loggedinId) {

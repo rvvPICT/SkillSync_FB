@@ -22,7 +22,7 @@ import { fetchUserProjects, fetchUserPublicProjects } from "../services/projects
 const ViewProfile = ({ route }) => {
   const navigation = useNavigation();
   const loggedinId = route.params.userId;
-  const { otherId, fromSearch, fromSearchFilters=false, fromProject, projectId } = route.params;
+  const { otherId, fromSearch, fromSearchFilters=false, fromProject=false, projectId=null } = route.params;
   // const otherId = route.params.otherId;
   // const fromSearch = route.params.fromSearch;
   // const fromSearchFilters = route.params.fromSearchFilters;
@@ -51,7 +51,6 @@ const ViewProfile = ({ route }) => {
           setUserProjects(projectData);
         }
 				else {
-
           console.log("Fetching user with ID:", loggedinId);
           const userData = await fetchUserById(loggedinId); 
           if (!userData) throw new Error("User not found");
@@ -71,7 +70,7 @@ const ViewProfile = ({ route }) => {
       }
 		};
 		getUserData();
-	}, [userId, route.params?.forceRefresh]);
+	}, [userId, route.params?.forceRefresh, otherId]);
 
   const avatarImages = {
     0: require("../../assets/img/avatars/avatar1.png"),
@@ -113,6 +112,8 @@ const ViewProfile = ({ route }) => {
     }
   }
 
+  // handleSendInvite
+
 	const renderItem = ({ item }) => (
     <TouchableOpacity 
       style={styles.card}
@@ -126,7 +127,7 @@ const ViewProfile = ({ route }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       {/* <Navbar2 title="Profile" userId={userId}/> */}
-      <Navbar2 route={{ params: { title: "Profile", userId: loggedinId, otherId, fromSearch, fromProject, fromSearchFilters } }} />
+      <Navbar2 route={{ params: { title: "Profile", userId: loggedinId, otherId, fromSearch, fromProject, projectId, fromSearchFilters } }} />
       
       <ScrollView contentContainerStyle={{ padding: 15 }}>
         <View style={styles.headerContainer}>
@@ -162,7 +163,7 @@ const ViewProfile = ({ route }) => {
         { (otherId && fromProject && projectId) && (
           <TouchableOpacity 
             style={styles.editProfileButton} 
-            // onPress={() => navigation.navigate("EditProfile", { userId: loggedinId })}
+            // onPress={() => handleSendInvite()}
           >
             <Text style={styles.editProfileText}>Send Invite</Text>
           </TouchableOpacity>

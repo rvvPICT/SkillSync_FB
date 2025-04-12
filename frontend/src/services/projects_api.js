@@ -39,9 +39,35 @@
 
 
 import axios from "axios";
+import { Platform } from 'react-native';
 
-// const API_URL = "https://localhost:5001/api/projects";
-const API_URL = "http://10.0.2.2:5001/api/projects"; // Emulator only
+// const API_URL = "http://10.0.2.2:5001/api/projects"; // Emulator only
+
+
+// const API_URL = Platform.OS === 'ios' 
+//     ? 'http://localhost:5001/api/projects' 
+//     : 'http://10.0.2.2:5001/api/projects';
+
+const API_URL = Platform.OS === 'ios' 
+    ? 'http://localhost:5001/api/projects' 
+    : 'http://192.168.0.101:5001/api/projects';
+
+
+// const API_URL = Platform.OS === 'ios' 
+//     ? 'http://localhost:5001/api/projects' 
+//     : 'http://192.168.241.129:5001/api/projects';
+
+// export const addProject = async (userId, projectData) => {
+//   console.log("API URL:", `${API_URL}/add-project/${userId}`);
+//   console.log("Project Data:", projectData);
+//   try {
+//     const response = await axios.post(`${API_URL}/add-project/${userId}`, projectData);
+//     return response.data;
+//   } catch (error) {
+//     console.log("Add Project Error:", error.response ? error.response.data : error.message);
+//     return { error: error.response?.data?.message || "Add Project Failed" };
+//   }
+// };
 
 export const addProject = async (userId, projectData) => {
   console.log("API URL:", `${API_URL}/add-project/${userId}`);

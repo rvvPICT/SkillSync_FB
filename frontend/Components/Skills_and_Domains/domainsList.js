@@ -100,7 +100,97 @@ const domainsList = [
             "Public Safety",
             "Environmental Monitoring"
         ]
-    }
+    },
+    {
+        type: "Cybersecurity",
+        subtypes: [
+            "Network Security",
+            "Application Security",
+            "Identity & Access Management",
+            "Threat Detection",
+            "Security Auditing"
+        ]
+    },
+    {
+        type: "Data & Analytics",
+        subtypes: [
+            "Data Warehousing",
+            "Big Data",
+            "Business Intelligence",
+            "Data Visualization",
+            "ETL Pipelines"
+        ]
+    },
+    {
+        type: "Energy & Utilities",
+        subtypes: [
+            "Smart Grid",
+            "Energy Monitoring",
+            "Sustainable Energy",
+            "Utility Billing Systems",
+            "IoT for Utilities"
+        ]
+    },
+    {
+        type: "Agriculture & Food Tech",
+        subtypes: [
+            "AgriTech",
+            "Food Delivery",
+            "Farm Management",
+            "Crop Monitoring",
+            "Supply Chain for Food"
+        ]
+    },
+    {
+        type: "Legal & Compliance",
+        subtypes: [
+            "LegalTech",
+            "Contract Management",
+            "Regulatory Tech",
+            "Compliance Tracking",
+            "E-Discovery"
+        ]
+    },
+    {
+        type: "Travel & Hospitality",
+        subtypes: [
+            "Travel Planning",
+            "Hotel Management",
+            "Tourism Platforms",
+            "Booking Systems",
+            "Experience Platforms"
+        ]
+    },
+    {
+        type: "Human Resources",
+        subtypes: [
+            "HR Tech",
+            "Recruitment Platforms",
+            "Payroll Systems",
+            "Employee Engagement",
+            "Onboarding Tools"
+        ]
+    },
+    {
+        type: "Marketing & Advertising",
+        subtypes: [
+            "AdTech",
+            "Digital Marketing Tools",
+            "Marketing Automation",
+            "SEO Tools",
+            "Campaign Management"
+        ]
+    },
+    {
+        type: "Blockchain & Web3",
+        subtypes: [
+            "NFT Platforms",
+            "Decentralized Apps (DApps)",
+            "Smart Contracts",
+            "DeFi Solutions",
+            "Blockchain Infrastructure"
+        ]
+    },
 ];
 
 export default domainsList;

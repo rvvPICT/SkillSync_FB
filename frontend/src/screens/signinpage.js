@@ -97,7 +97,7 @@ const Signin = (props) => {
         <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>
 
-      <View>
+      {/* <View>
         <Text style={styles.underscore}>___________________________________________</Text>
 
         <Text style={styles.line2}>Or Sign In with</Text>
@@ -115,7 +115,7 @@ const Signin = (props) => {
                   source = {require('../../assets/img/Sign_in_up/linkedIn_logo.png')}
                 />
               </TouchableOpacity>
-            </View>
+            </View> */}
       
             <View style={styles.last}>
               <Text>Don't have an account?</Text>

@@ -1,17 +1,17 @@
 const skillsList = [
 	{
-			type: "Frontend Development",
-			subtypes: [
-					"React",
-					"Angular",
-					"Vue.js",
-					"JavaScript",
-					"TypeScript",
-					"HTML/CSS",
-					"Redux",
-					"Web Design",
-					"Responsive Design"
-			]
+		type: "Frontend Development",
+		subtypes: [
+			"React",
+			"Angular",
+			"Vue.js",
+			"JavaScript",
+			"TypeScript",
+			"HTML/CSS",
+			"Redux",
+			"Web Design",
+			"Responsive Design"
+		]
 	},
 	{
 			type: "Backend Development",
@@ -137,6 +137,69 @@ const skillsList = [
 					"Swift",
 					"Kotlin"
 			]
+	},
+	{
+		type: "Cybersecurity",
+		subtypes: [
+			"Ethical Hacking",
+			"Network Security",
+			"Penetration Testing",
+			"Security Auditing",
+			"OWASP",
+			"SIEM Tools",
+			"Cybersecurity Compliance"
+		]
+	},
+	{
+		type: "Data & Analytics",
+		subtypes: [
+			"Data Analysis",
+			"Business Intelligence",
+			"Excel",
+			"Tableau",
+			"Power BI",
+			"Data Visualization",
+			"ETL Pipelines",
+			"SQL for Analytics"
+		]
+	},
+	{
+		type: "Project & Product Management",
+		subtypes: [
+			"Agile Methodologies",
+			"Scrum",
+			"Kanban",
+			"JIRA",
+			"Asana",
+			"Trello",
+			"Product Roadmapping",
+			"User Stories",
+			"Stakeholder Management"
+		]
+	},
+	{
+		type: "Game Development",
+		subtypes: [
+			"Unity",
+			"Unreal Engine",
+			"Game Physics",
+			"Game Design",
+			"Level Design",
+			"Mobile Game Development",
+			"C# for Games"
+		]
+	},
+	{
+		type: "Hardware & Embedded Systems",
+		subtypes: [
+			"Embedded C",
+			"Arduino",
+			"Raspberry Pi",
+			"PCB Design",
+			"Microcontrollers",
+			"FPGA",
+			"Sensor Integration"
+		]
 	}
 ];
 

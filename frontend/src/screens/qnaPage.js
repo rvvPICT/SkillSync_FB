@@ -87,29 +87,31 @@ const QnAPage = ({ route }) => {
 
 
   const renderItem = ({ item }) => {
-    
+    return(
     <View style={styles.box}>
       <View style={styles.row}>
         <Image 
           source={avatarImages[loadUserData(item).avatar%5]|| avatarImages[0]} 
           style={styles.profileImage} 
         />
-                <Text style={styles.item}>{loadUserData(item).fullName || loadUserData(item).username}</Text>
+                {/* <Text style={styles.item}>{loadUserData(item).fullName || loadUserData(item).username}</Text> */}
+              <Text style={styles.item}>{loadUserData(item).username}</Text>
               </View>
               <Text style={styles.questionText}>{item.question}</Text>
               <TouchableOpacity
                 style={styles.answerButton}
-                onPress={() => navigation.navigate("AnswerPage", { question: item })}
+                onPress={() => navigation.navigate("AnswerPage", { userId ,  question: item.question , questionId: item._id})}
               >
                 <Text style={styles.answerButtonText}>Answer</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.answerButton}
-                onPress={() => navigation.navigate("ViewAnswersPage", { question: item })}
+                onPress={() => navigation.navigate("ViewAnswersPage", { userId ,  question: item.question , questionId: item._id })}
               >
                 <Text style={styles.answerButtonText}>View Answers</Text>
               </TouchableOpacity>
             </View>
+    );
   }
 
   return (

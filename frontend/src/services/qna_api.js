@@ -7,14 +7,42 @@ const API_URL = "http://10.0.2.2:5001/api/qna";
 // Signup API
 export const postQuestion = async (questionData) => {
     try {
-        // const response = await axios.post(`${API_URL}/question`, questionData);
-        const response = await axios.post(`${API_URL}/question`, {questionData});
+        const response = await axios.post(`${API_URL}/question`, questionData);
+        // const response = await axios.post(`${API_URL}/question`, {questionData});
         //export const postQuestion = async (userId,questionData) => {
         return response.data;
     } catch (error) {
         console.log("Add question Error:", error.response ? error.response.data : error.message);
         return { error: error.response?.data?.message || "Add question Failed" };
     }
+};
+
+
+export const postAnswer = async (questionId, answerData) => {
+  try {
+    // Log the complete request being made
+   
+    const response = await axios.post(
+      `${API_URL}/question/${questionId}/answer`,
+      answerData
+    );
+    
+    console.log("Success Response:", response.data);
+    return response.data;
+  } catch (error) {
+    // More detailed error logging
+    console.log("Error Status:", error.response?.status);
+    console.log("Error Data:", error.response?.data);
+    console.log("Error Message:", error.message);
+    
+    // Return more specific error information
+    return { 
+      error: error.response?.data?.message || 
+             error.response?.data || 
+             error.message || 
+             "Add answer Failed" 
+    };
+  }
 };
 
 
@@ -58,4 +86,22 @@ export const fetchQuestions = async () => {
       return []; // Return empty array on any error
     }
   };
+
   
+  export const fetchAnswers = async (questionId) => {
+    try {
+      const response = await axios.get(`${API_URL}/viewAnswers/${questionId}`);
+      return response.data;
+    } catch (error) {
+      // Error handling
+      if (error.response) {
+        console.error("Error fetching question - Status:", error.response.status);
+        console.error("Error data:", error.response.data);
+      } else if (error.request) {
+        console.error("Error fetching question - No response received");
+      } else {
+        console.error("Error fetching question:", error.message);
+      }
+      return null;
+    }
+  };

@@ -44,7 +44,8 @@ const UserSchema = new mongoose.Schema({
     experienceLevel: { type: String },
     lookingForTeammates: { type: Boolean, default: false },
     availableForHackathons: { type: Boolean, default: false },
-    isMentor: { type: Boolean, default: false }
+    isMentor: { type: Boolean, default: false } ,
+    mynotifications: [{type : mongoose.Schema.Types.ObjectId , ref: "Notification" , default : []}] 
 }, { timestamps: true });
 
 const User = mongoose.model("User", UserSchema);

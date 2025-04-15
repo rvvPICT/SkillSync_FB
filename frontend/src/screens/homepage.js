@@ -77,7 +77,8 @@ const Homepage = ({ route }) => {
 
       <View style={[styles.upperbar]}>
 				
-				<Navbar userId={userId}/>
+				{/* <Navbar userId={userId}/> */}
+				<Navbar route={{ params: { userId } }} />
 
 				{/* <View>	// testing navigation
 					<Text>Heyy, {username}</Text>

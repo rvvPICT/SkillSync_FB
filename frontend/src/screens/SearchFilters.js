@@ -1,7 +1,10 @@
+// import React, { useState, useEffect } from "react";
 // import { SafeAreaView, View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
 // import Navbar2 from "../../Components/navbar2";
 // import Footer from "../../Components/footer";
 // import { useNavigation } from "@react-navigation/native";
+// import SkillsAccordion from "../../Components/Skills_and_Domains/SkillsAccordion.js";
+// import DomainAccordion from "../../Components/Skills_and_Domains/DomainAccordian.js";
 
 // import { fetchAllUsers, fetchAllMentors, fetchAllUsersExceptLoggedIn } from "../services/users_api";
 // import { fetchPublicProjects } from "../services/projects_api";
@@ -10,6 +13,7 @@
 //   const navigation = useNavigation();
 //   const [search, setSearch] = useState("");
 //   const [selectedFilters, setSelectedFilters] = useState([]);
+//   const [selectedDomain, setSelectedDomain] = useState("");
 //   const [teamMembers, setTeamMembers] = useState([]);
 //   const [mentors, setMentors] = useState([]);
 //   const [projects, setProjects] = useState([]);
@@ -35,11 +39,6 @@
 //       console.warn("⚠️ SearchFilters - No userId received!");
 //     }
 //   }, [route.params, loggedinId]);
-
-//   // Determine what filter options to show based on type
-//   const filterOptions = type === "project" ? 
-//     ["Artificial Intelligence", "Retail", "Healthcare", "Blockchain", "Finance"] : 
-//     ["AI", "ML", "Web Dev", "React", "Blockchain", "Python", "Django", "Cloud", "AWS", "Cybersecurity"];
 
 //   useEffect(() => {
 //     const getData = async () => {
@@ -70,10 +69,14 @@
 //     getData();
 //   }, [type, loggedinId]);
 
-//   const toggleFilter = (filter) => {
-//     setSelectedFilters(prev =>
-//       prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]
-//     );
+//   // Handle skills selection from SkillsAccordion
+//   const handleSkillsChange = (skills) => {
+//     setSelectedFilters(skills);
+//   };
+
+//   // Handle domain selection from DomainAccordion
+//   const handleDomainChange = (domain) => {
+//     setSelectedDomain(domain);
 //   };
 
 //   // Get current data based on type
@@ -98,13 +101,12 @@
 //       if (!nameMatch) return false;
       
 //       // If no filters selected, return all items that match text search
-//       if (selectedFilters.length === 0) return true;
-      
-//       // Check if item matches selected filters
 //       if (type === "project") {
-//         return selectedFilters.includes(item.domain);
+//         if (!selectedDomain) return true;
+//         return item.domain === selectedDomain;
 //       } else {
 //         // For users/mentors, check if they have any of the selected skills
+//         if (selectedFilters.length === 0) return true;
 //         return item.skills?.some(skill => selectedFilters.includes(skill));
 //       }
 //     });
@@ -177,7 +179,7 @@
 //     );
 //   };
 
-//   const searchTitle = `Search for ${type === "project" ? "Projects" : type === "mentors" ? "Mentors" : "Team Members"}`;
+//   const searchTitle = `Search for ${type === "project" ? "\nProjects" : type === "mentors" ? "\nMentors" : "\nTeam Members"}`;
 
 //   // If we don't have a userId, show an error state
 //   if (!loggedinId) {
@@ -215,28 +217,24 @@
 //         />
         
 //         <Text style={styles.filterLabel}>
-//           Filter by {type === "project" ? "Domain" : "Skills"}:
+//           {type === "project" ? "Filter by Domain:" : "Filter by Skills:"}
 //         </Text>
         
-//         <View style={styles.filterContainer}>
-//           {filterOptions.map((filter, index) => (
-//             <TouchableOpacity
-//               key={index}
-//               style={[
-//                 styles.filterButton, 
-//                 selectedFilters.includes(filter) && styles.selectedFilter
-//               ]}
-//               onPress={() => toggleFilter(filter)}
-//             >
-//               <Text style={[
-//                 styles.filterText,
-//                 selectedFilters.includes(filter) && styles.selectedFilterText
-//               ]}>
-//                 {filter}
-//               </Text>
-//             </TouchableOpacity>
-//           ))}
+//         <View style={styles.accordionContainer}>
+//           {type === "project" ? (
+//             <DomainAccordion 
+//               initialDomain={selectedDomain}
+//               onDomainChange={handleDomainChange}
+//             />
+//           ) : (
+//             <SkillsAccordion 
+//               initialSkills={selectedFilters}
+//               onSkillsChange={handleSkillsChange}
+//             />
+//           )}
 //         </View>
+        
+//         <Text style={styles.resultLabel}>Results:</Text>
         
 //         {loading ? (
 //           <View style={styles.loaderContainer}>
@@ -283,29 +281,15 @@
 //     fontWeight: "bold",
 //     marginBottom: 10,
 //   },
-//   filterContainer: {
-//     flexDirection: "row",
-//     flexWrap: "wrap",
-//     marginBottom: 15,
-//   },
-//   filterButton: {
-//     paddingVertical: 8,
-//     paddingHorizontal: 12,
-//     borderRadius: 20,
-//     borderWidth: 1,
-//     borderColor: "#9370DB",
-//     marginRight: 10,
+//   resultLabel: {
+//     fontSize: 16,
+//     fontWeight: "bold",
+//     marginTop: 15,
 //     marginBottom: 10,
 //   },
-//   selectedFilter: {
-//     backgroundColor: "#9370DB",
-//   },
-//   filterText: {
-//     color: "#7164b4",
-//     fontWeight: "500",
-//   },
-//   selectedFilterText: {
-//     color: "white",
+//   accordionContainer: {
+//     marginBottom: 10,
+//     maxHeight: 300, // Limit height to prevent taking too much space
 //   },
 //   card: {
 //     padding: 20,
@@ -564,6 +548,8 @@ const SearchFilters = ({ route }) => {
                   otherId: item._id,
                   fromSearch: true,
                   fromSearchFilters: true,
+                  fromProject,
+                  projectId,
                 });
               }
             }}
@@ -572,14 +558,14 @@ const SearchFilters = ({ route }) => {
           </TouchableOpacity>
           
           {/* Send invite button - only show for users when fromProject is true */}
-          {fromProject && projectId && (
+          {/* {fromProject && projectId && (
             <TouchableOpacity 
               style={styles.inviteBtn}
               onPress={() => handleSendInvite(item._id)}
             >
               <Text style={styles.btnText}>Send Invite</Text>
             </TouchableOpacity>
-          )}
+          )} */}
         </View>
       </View>
     );

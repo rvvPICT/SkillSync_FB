@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@react-native-firebase/app": "^21.12.3",
+    "expo": "^52.0.41"
+  }
+}

@@ -430,6 +430,7 @@ import { useNavigation } from "@react-navigation/native";
 import Carousel from "react-native-snap-carousel";
 import { Picker } from "@react-native-picker/picker";
 
+
 import Navbar2 from "../../Components/navbar2";
 import SkillsAccordion from "../../Components/Skills_and_Domains/SkillsAccordion.js";
 

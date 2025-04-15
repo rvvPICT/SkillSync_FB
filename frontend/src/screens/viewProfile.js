@@ -9,7 +9,8 @@ import {
   SafeAreaView,
   FlatList,
   ActivityIndicator,
-  Linking
+  Linking,
+  Alert
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
@@ -17,12 +18,14 @@ import Navbar2 from "../../Components/navbar2";
 import Footer from "../../Components/footer";
 
 import { fetchUserById } from "../services/users_api";
-import { fetchUserProjects, fetchUserPublicProjects } from "../services/projects_api";
+import { fetchProjectMembers, fetchUserProjects, fetchUserPublicProjects , sendInvite as sendInviteAPI, acceptApplication } from "../services/projects_api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ViewProfile = ({ route }) => {
   const navigation = useNavigation();
   const loggedinId = route.params.userId;
-  const { otherId, fromSearch, fromSearchFilters=false, fromProject=false, projectId=null } = route.params;
+  const { otherId, fromSearch, fromSearchFilters=false, fromProject=false, projectId=null, fromNotification=false } = route.params;
+  const projectApplication = route.params?.project || null;
   // const otherId = route.params.otherId;
   // const fromSearch = route.params.fromSearch;
   // const fromSearchFilters = route.params.fromSearchFilters;
@@ -35,6 +38,7 @@ const ViewProfile = ({ route }) => {
 	const [userProjects, setUserProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 	const [userId, setUserId] = useState(null);
+  const [isApplying, setIsApplying] = useState(false);
 
 	useEffect(() => {
 		const getUserData = async () => {
@@ -103,7 +107,24 @@ const ViewProfile = ({ route }) => {
       </View>
     );
   }
+  const handleSendInvite =async() => {
+    try {
+      console.log("Invite sender (loggedinId):", loggedinId);
+      console.log("Invite receiver (otherId):", otherId);
+      console.log("Project ID:", projectId);
 
+      const token = await AsyncStorage.getItem('token') ;
+      console.log(`Token : ${token}`) ;
+      if(!token) return Alert.alert("Unauthorized!" , "Please log in") ;
+
+      console.log("Sending invites from frontend !") ;
+      await sendInviteAPI(projectId , otherId , token) ;
+      Alert.alert("Invite Sent !" , "User has been invited to this project")
+    }catch(error){
+      const errorMessage = error?.response?.data?.message || "Failed to send invite" ;
+      Alert.alert("Error" , errorMessage) ;
+    }
+  }
   const gotoViewProject = (project) => {
     if (otherId) {
       navigation.navigate('ViewProject', { projectType: "publicProjects", project, userId: loggedinId, fromSearch: true });
@@ -112,7 +133,47 @@ const ViewProfile = ({ route }) => {
     }
   }
 
-  // handleSendInvite
+  // const handleAcceptApplication = async () => {
+  //   try {
+  //     setIsApplying(true);
+  //     const notificationId = route.params?.notificationId;
+      
+  //     if (!notificationId) {
+  //       Alert.alert("Error", "Notification ID not found");
+  //       return;
+  //     }
+  //     const response = await acceptApplication(projectApplication._id, userId, notificationId);
+      
+  //     const fetchedMembers = await fetchProjectMembers(projectApplication._id);
+  //     setMemberUsers(fetchedMembers);
+      
+  //     Alert.alert("Success", response?.msg || "Successfully joined the project!");
+      
+  //     navigation.navigate("Notification", { userId });
+  //   } catch (error) {
+  //     Alert.alert("Error", error.message || "Failed to accept invitation.");
+  //   } finally {
+  //     setIsApplying(false);
+  //   }
+  // };
+
+  const handleAcceptApplication = async () => {
+    try {
+      setIsApplying(true);
+      const notificationId = route.params?.notificationId;
+      if (!notificationId) {
+        Alert.alert("Error", "Notification ID not found");
+        return;
+      }
+      const response = await acceptApplication(projectApplication._id, otherId, notificationId);
+      Alert.alert("Success", response?.msg || "Successfully accepted application!");
+      navigation.navigate("Notification", { userId: loggedinId });
+    } catch (error) {
+      Alert.alert("Error", error.message || "Failed to accept application.");
+    } finally {
+      setIsApplying(false);
+    }
+  };
 
 	const renderItem = ({ item }) => (
     <TouchableOpacity 
@@ -160,12 +221,21 @@ const ViewProfile = ({ route }) => {
           </TouchableOpacity>
         )}
 
-        { (otherId && fromProject && projectId) && (
+        { (otherId && fromProject && projectId && !fromNotification) && (
           <TouchableOpacity 
-            style={styles.editProfileButton} 
-            // onPress={() => handleSendInvite()}
+            style={styles.editProfileButton} onPress={() => handleSendInvite()}
+            // onPress={() => navigation.navigate("EditProfile", { userId: loggedinId })}
           >
             <Text style={styles.editProfileText}>Send Invite</Text>
+          </TouchableOpacity>
+        )}
+
+        { (fromNotification) && (
+          <TouchableOpacity 
+            style={styles.editProfileButton} onPress={handleAcceptApplication}
+            // onPress={() => navigation.navigate("EditProfile", { userId: loggedinId })}
+          >
+            <Text style={styles.editProfileText}>Accept Application</Text>
           </TouchableOpacity>
         )}
 

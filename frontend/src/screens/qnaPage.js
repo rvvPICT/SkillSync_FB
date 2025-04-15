@@ -357,7 +357,7 @@ const QnAPage = ({ route }) => {
 
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => navigation.navigate("AskQuestionPage", { userId })}
+        onPress={() => navigation.navigate("AskQuestion", { userId })}
       >
         <Icon name="add" size={30} color="#7164b4" />
       </TouchableOpacity>

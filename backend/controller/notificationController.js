@@ -38,97 +38,168 @@ export const getUserNotification = async (req , res) => {
     } 
 };
 
+// export const updateNotificationStatus = async (req, res) => {
+//     try {
+//         console.log("Reached here :") ;
+//         const { notificationId } = req.params;
+//         const { status } = req.body;
+
+//         console.log("NotificationId :" , notificationId) ;
+//         console.log("Status :" , status) ;
+        
+//         const notification = await Notification.findById(notificationId);
+
+//         if (!notification) {
+//             return res.status(404).json({ message: 'Notification not found' });
+//         }
+
+//         // Update status
+//         notification.status = status;
+//         console.log("Notification status: ", notification.status);
+//         await notification.save();
+
+//         // Proceed only if status is accepted
+//         if (status === 'accepted') {
+//             const project = await Project.findById(notification.project);
+
+//             if (!project) {
+//                 return res.status(404).json({ message: 'Project not found' });
+//             }
+//             const userIdToAdd = notification.type === 'application'
+//             ? notification.sender
+//             : notification.receiver;
+
+//             const userToAdd = await User.findById(userIdToAdd);
+//             if (!project.members.includes(userToAdd._id)) {
+//                 project.members.push(userToAdd._id);
+            
+//                 if (!userToAdd.myProjects.includes(project._id)) {
+//                     userToAdd.myProjects.push(project._id);
+//                 }
+            
+//                 await project.save();
+//                 await userToAdd.save();  // Save updated user too!
+//             }
+//         }
+//         console.log("Reached Here !")
+
+//         const userIdToUpdate = notification.type === 'application'
+//             ? notification.sender
+//             : notification.receiver;
+
+//         const userToUpdate = await User.findById(userIdToUpdate);
+
+//         const project = await Project.findById(notification.project);
+
+//         if (!project) {
+//             return res.status(404).json({ message: 'Project not found' });
+//         }
+
+//         if (notification.type === 'application') {
+//             const applicant = project.applicants.find(app => app.user.toString() === userIdToUpdate.toString());
+//             if (applicant) {
+//                 applicant.status = status === 'accepted' ? 'approved' : 'rejected';
+//             }
+//         } else if (notification.type === 'invite') {
+//             const invitee = project.invites.find(inv => inv.user.toString() === userIdToUpdate.toString());
+//             if (invitee) {
+//                 invitee.status = status;
+//             }
+//         }
+
+//         // Only add to members/myProjects if accepted
+//         if (status === 'accepted') {
+//             if (!project.members.includes(userToUpdate._id)) {
+//                 project.members.push(userToUpdate._id);
+
+//                 if (!userToUpdate.myProjects.includes(project._id)) {
+//                     userToUpdate.myProjects.push(project._id);
+//                 }
+//             }
+//         }
+
+//         // Save changes
+//         await project.save();
+//         await userToUpdate.save();
+
+
+//         await Notification.findByIdAndDelete(notificationId);
+
+//         res.json({ message: 'Notification handled successfully' });
+
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ message: 'Server error' });
+//     }
+// };
+
+
 export const updateNotificationStatus = async (req, res) => {
     try {
-        console.log("Reached here :") ;
+        console.log("Processing notification status update");
         const { notificationId } = req.params;
         const { status } = req.body;
-
-        console.log("NotificationId :" , notificationId) ;
-        console.log("Status :" , status) ;
         
         const notification = await Notification.findById(notificationId);
-
         if (!notification) {
             return res.status(404).json({ message: 'Notification not found' });
         }
 
-        // Update status
+        // Update notification status
         notification.status = status;
-        console.log("Notification status: ", notification.status);
         await notification.save();
 
-        // Proceed only if status is accepted
-        if (status === 'accepted') {
-            const project = await Project.findById(notification.project);
-
-            if (!project) {
-                return res.status(404).json({ message: 'Project not found' });
-            }
-            const userIdToAdd = notification.type === 'application'
-            ? notification.sender
-            : notification.receiver;
-
-            const userToAdd = await User.findById(userIdToAdd);
-            if (!project.members.includes(userToAdd._id)) {
-                project.members.push(userToAdd._id);
-            
-                if (!userToAdd.myProjects.includes(project._id)) {
-                    userToAdd.myProjects.push(project._id);
-                }
-            
-                await project.save();
-                await userToAdd.save();  // Save updated user too!
-            }
-        }
-        console.log("Reached Here !")
-
-        const userIdToUpdate = notification.type === 'application'
-            ? notification.sender
-            : notification.receiver;
-
-        const userToUpdate = await User.findById(userIdToUpdate);
-
+        // Get related project
         const project = await Project.findById(notification.project);
-
         if (!project) {
             return res.status(404).json({ message: 'Project not found' });
         }
 
+        // Determine which user ID needs to be updated
+        const userIdToUpdate = notification.type === 'application' 
+            ? notification.sender 
+            : notification.receiver;
+
+        // Update project applicants/invites status
         if (notification.type === 'application') {
-            const applicant = project.applicants.find(app => app.user.toString() === userIdToUpdate.toString());
-            if (applicant) {
-                applicant.status = status === 'accepted' ? 'approved' : 'rejected';
+            const applicantIndex = project.applicants.findIndex(
+                app => app.user.toString() === userIdToUpdate.toString()
+            );
+            if (applicantIndex >= 0) {
+                project.applicants[applicantIndex].status = status === 'accepted' ? 'approved' : 'rejected';
             }
         } else if (notification.type === 'invite') {
-            const invitee = project.invites.find(inv => inv.user.toString() === userIdToUpdate.toString());
-            if (invitee) {
-                invitee.status = status;
+            const inviteIndex = project.invites.findIndex(
+                inv => inv.user.toString() === userIdToUpdate.toString()
+            );
+            if (inviteIndex >= 0) {
+                project.invites[inviteIndex].status = status;
             }
         }
 
-        // Only add to members/myProjects if accepted
+        // If accepted, add user to project members
         if (status === 'accepted') {
-            if (!project.members.includes(userToUpdate._id)) {
-                project.members.push(userToUpdate._id);
-
-                if (!userToUpdate.myProjects.includes(project._id)) {
-                    userToUpdate.myProjects.push(project._id);
-                }
+            if (!project.members.includes(userIdToUpdate)) {
+                project.members.push(userIdToUpdate);
+                
+                // Update user's project list without triggering full validation
+                await User.findByIdAndUpdate(
+                    userIdToUpdate,
+                    { $addToSet: { myProjects: project._id } },
+                    { runValidators: false }
+                );
             }
         }
 
-        // Save changes
+        // Save project changes
         await project.save();
-        await userToUpdate.save();
-
-
+        
+        // Delete the notification (optional - you may want to keep it with updated status)
         await Notification.findByIdAndDelete(notificationId);
 
         res.json({ message: 'Notification handled successfully' });
-
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
+        console.error("Error updating notification:", err);
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 };

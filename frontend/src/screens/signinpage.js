@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Platform, Alert } from "react-native";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, SafeAreaView, Pressable } from "react-native";
-
-import { login_post } from "../services/users_api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { login_post } from "../services/users_api.js";
 
 
 const Signin = (props) => {
@@ -28,7 +28,10 @@ const Signin = (props) => {
         Alert.alert("Login Failed", response.error);
       } else {
         // Store token in AsyncStorage (already handled in login_post)
-        const userId = response.user?._id; // Ensure backend sends the user object
+        const userId = response.user?._id; 
+        const token = response.token ;
+        console.log("Token :" , token) ;
+        await AsyncStorage.setItem('token', token); // Ensure backend sends the user object
         props.navigation.navigate("Home", { userId });
       }
     } catch (error) {
@@ -97,7 +100,7 @@ const Signin = (props) => {
         <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>
 
-      <View>
+      {/* <View>
         <Text style={styles.underscore}>___________________________________________</Text>
 
         <Text style={styles.line2}>Or Sign In with</Text>
@@ -115,7 +118,7 @@ const Signin = (props) => {
                   source = {require('../../assets/img/Sign_in_up/linkedIn_logo.png')}
                 />
               </TouchableOpacity>
-            </View>
+            </View> */}
       
             <View style={styles.last}>
               <Text>Don't have an account?</Text>

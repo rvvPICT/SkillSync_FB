@@ -1,8 +1,21 @@
 import axios from "axios";
-//import mongoose from "mongoose";
+import { Platform } from 'react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// const API_URL = "http://10.0.2.2:5001/api/qna";
 
 
-const API_URL = "http://10.0.2.2:5001/api/qna";
+const API_URL = Platform.OS === 'ios' 
+    ? 'http://localhost:5001/api/qna' 
+    : 'http://10.0.2.2:5001/api/qna';
+
+// const API_URL = Platform.OS === 'ios' 
+//     ? 'http://localhost:5001/api/qna' 
+//     : 'http://192.168.0.101:5001/api/qna';
+
+// const API_URL = Platform.OS === 'ios' 
+//     ? 'http://localhost:5001/api/qna' 
+//     : 'http://192.168.241.129:5001/api/qna';
 
 // Signup API
 export const postQuestion = async (questionData) => {
@@ -88,7 +101,7 @@ export const fetchQuestions = async () => {
   };
 
   
-  export const fetchAnswers = async (questionId) => {
+export const fetchAnswers = async (questionId) => {
     try {
       const response = await axios.get(`${API_URL}/viewAnswers/${questionId}`);
       return response.data;
@@ -104,4 +117,4 @@ export const fetchQuestions = async () => {
       }
       return null;
     }
-  };
+};

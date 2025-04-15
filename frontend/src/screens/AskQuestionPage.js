@@ -7,85 +7,85 @@ import {
   StyleSheet,
   SafeAreaView,
   Alert,
+  ScrollView,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import Navbar2 from '../../Components/navbar2';
 import { postQuestion } from '../services/qna_api';
+import DomainAccordion from "../../Components/Skills_and_Domains/DomainAccordian";
 
 const AskQuestionPage = ({route}) => {
   const navigation = useNavigation();
-  //const route = useRoute();
   const userId = route.params?.userId; // Retrieve userId from navigation params
 
   console.log("Received User ID:", userId); // Debugging
 
   const [question, setQuestion] = useState("");
-  const [domain, setDomain] = useState(null);
-
-  const domains = ["Artificial Intelligence", "Blockchain", "Finance", "Retail", "Healthcare"];
+  const [domain, setDomain] = useState("");
 
   const handleSubmit = async () => {
     if (!userId) {
       Alert.alert("Error", "User ID is missing. Please try again.");
       return;
     }
+    
     if (question.trim() === "") {
-      alert("Please enter a question.");
+      Alert.alert("Error", "Please enter a question.");
       return;
     }
-    if (!domain) {
-      alert("Please select a domain.");
+    
+    if (!domain.trim()) {
+      Alert.alert("Error", "Please select a domain.");
       return;
     }
+    
     try {
       const questionData = { userId, question, domain };
       const response = await postQuestion(questionData);
       console.log("Added Question:", response);
       
       if (!response.error) {
-        Alert.alert("Success",`Question added successfully!\nDomain: ${domain}`);
+        Alert.alert("Success", `Question added successfully!\nDomain: ${domain}`);
         navigation.navigate("QnA", { forceRefresh: Date.now() });
       } else {
-        Alert.alert("Add question Failed:", response.error);
+        Alert.alert("Add question Failed", response.error);
       }
     } catch (error) {
       console.error("Add question Failed:", error);
-      Alert.alert("Add question Failed:", "An unexpected error occurred. Please try again.");
+      Alert.alert("Add question Failed", "An unexpected error occurred. Please try again.");
     }
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
-      <Navbar2 title="Ask a Question" />
-      <View style={styles.container}>
-        <Text style={styles.label}>Select a Domain:</Text>
-        <View style={styles.domainContainer}>
-          {domains.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[styles.domainButton, domain === item && styles.selectedDomain]}
-              onPress={() => setDomain(item)}
-            >
-              <Text style={[styles.domainText, domain === item && styles.selectedDomainText]}>
-                {item}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+      <Navbar2 route={{ params: { title: "Ask a Question", userId } }} />
+      <ScrollView>
+        <View style={styles.container}>
+          <Text style={styles.label}>Select a Domain:</Text>
+          <View style={styles.domainContainer}>
+            <DomainAccordion
+              initialDomain={domain}
+              onDomainChange={(val) => {
+                console.log("✅ Domain selected:", val);
+                setDomain(val);
+              }}
+            />
+          </View>
 
-        <Text style={styles.label}>Your Question:</Text>
-        <TextInput
-          style={styles.input}
-          multiline
-          placeholder="Write your question here..."
-          value={question}
-          onChangeText={setQuestion}
-        />
-        
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>Submit</Text>
-        </TouchableOpacity>
-      </View>
+          <Text style={styles.label}>Your Question:</Text>
+          <TextInput
+            style={styles.input}
+            multiline
+            placeholder="Write your question here..."
+            value={question}
+            onChangeText={setQuestion}
+          />
+          
+          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+            <Text style={styles.submitButtonText}>Submit</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -109,29 +109,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   domainContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
     marginBottom: 15,
-  },
-  domainButton: {
-    borderWidth: 2,
-    borderColor: "#7164b4",
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    marginRight: 10,
-    marginBottom: 10,
-  },
-  selectedDomain: {
-    backgroundColor: "#7164b4",
-  },
-  domainText: {
-    color: "#7164b4",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  selectedDomainText: {
-    color: "white",
   },
   input: {
     height: 120,

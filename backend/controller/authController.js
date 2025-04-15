@@ -75,12 +75,11 @@ export const signupController = async (req, res) => {
         console.log("Signup request received:", req.body);
         const API_KEY = process.env.MAIL_API_KEY;
 
-        // ✅ Check if API key exists
         if (!API_KEY) {
             return res.status(500).json({ success: false, message: "Email validation API key is missing." });
         }
 
-        let isValidEmail = false; 
+        let isValidEmail = true; 
 
         try {
             const validEmail = await axios.get(`https://api.emailvalidation.io/v1/info?email=${email}&apikey=${API_KEY}`);

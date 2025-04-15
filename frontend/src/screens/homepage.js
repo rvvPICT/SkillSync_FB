@@ -39,30 +39,7 @@ const Homepage = ({ route }) => {
 	const [activeTab, setActiveTab] = useState("myProjects");
 	const [projects, setProjects] = useState([]);
 	const [loading, setLoading] = useState(true);
-	// const [userId, setUserId] = useState(null);
 
-	// useEffect(() => {
-	// 	const getUserData = async () => {
-	// 		try {
-	// 			const paramUserId = route?.params?.userId || route?.params?.id;
-	// 			if (!paramUserId) {
-	// 				console.error("No user ID found in route params");
-	// 				return;
-	// 			}
-	// 			console.log("Fetching user with ID:", paramUserId);
-	// 			const userData = await fetchUserById(paramUserId); 
-	// 			if (!userData) {
-	// 				console.error("User data not found for ID:", paramUserId);
-	// 				return;
-	// 			}
-	// 			setUserId(userData._id);
-
-	// 		} catch (error) {
-	// 				console.error("Error fetching user data:", error);
-	// 		}
-	// 	};
-	// 	getUserData();
-	// }, []);
 
 	useEffect(() => {
 		const getProjects = async () => {
@@ -100,7 +77,8 @@ const Homepage = ({ route }) => {
 
       <View style={[styles.upperbar]}>
 				
-				<Navbar userId={userId}/>
+				{/* <Navbar userId={userId}/> */}
+				<Navbar route={{ params: { userId } }} />
 
 				{/* <View>	// testing navigation
 					<Text>Heyy, {username}</Text>
@@ -134,9 +112,11 @@ const Homepage = ({ route }) => {
 				</View>
 			</View>
 
-			<ProjectBox projectType={activeTab} projects={projects} userId={userId}/>
+			{/* <ProjectBox projectType={activeTab} projects={projects} userId={userId}/> */}
+			<ProjectBox route={{ params: { projectType: activeTab, projects, userId } }} />
 
-			<Footer page={"home"} userId={userId}/>
+			{/* <Footer page={"home"} userId={userId}/> */}
+			<Footer route={{ params: { page: "home", userId } }} />
 
     </SafeAreaView>
   )

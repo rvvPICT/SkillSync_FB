@@ -53,8 +53,6 @@ const Stack = createNativeStackNavigator();
 
 function App() {
 
-
-
   return (
     // <SafeAreaView style={{flex:1}}>
     //   {/* <Homepage/> */}

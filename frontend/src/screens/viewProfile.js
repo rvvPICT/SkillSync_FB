@@ -9,7 +9,8 @@ import {
   SafeAreaView,
   FlatList,
   ActivityIndicator,
-  Linking
+  Linking,
+  Alert
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
@@ -17,25 +18,53 @@ import Navbar2 from "../../Components/navbar2";
 import Footer from "../../Components/footer";
 
 import { fetchUserById } from "../services/users_api";
+import { fetchProjectMembers, fetchUserProjects, fetchUserPublicProjects , sendInvite as sendInviteAPI, acceptApplication } from "../services/projects_api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ViewProfile = ({ route }) => {
   const navigation = useNavigation();
-  // const userId = route?.params?.userId || "YOUR_DEFAULT_USER_ID"; // Replace with actual user ID from params or authentication
-  console.log("Received userId:", userId);
+  const loggedinId = route.params.userId;
+  const { otherId, fromSearch, fromSearchFilters=false, fromProject=false, projectId=null, fromNotification=false } = route.params;
+  const projectApplication = route.params?.project || null;
+  // const otherId = route.params.otherId;
+  // const fromSearch = route.params.fromSearch;
+  // const fromSearchFilters = route.params.fromSearchFilters;
+  // const fromProject = route.params.fromProject;
+  // const projectId = route.params.projectId;
+  console.log("Received userId:", loggedinId);
   const [error, setError] = useState(null);
 
   const [userData, setUserData] = useState(null);
+	const [userProjects, setUserProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 	const [userId, setUserId] = useState(null);
+  const [isApplying, setIsApplying] = useState(false);
 
 	useEffect(() => {
 		const getUserData = async () => {
 			try {
-				console.log("Fetching user with ID:", route?.params?.userId);
-				const userData = await fetchUserById(route?.params?.userId); 
-				if (!userData) throw new Error("User not found");
-				setUserId(userData._id);
-        setUserData(userData);
+        if (otherId) {
+          console.log("Fetching user with ID:", otherId);
+          const userData = await fetchUserById(otherId);
+          if (!userData) throw new Error("User not found");
+          setUserId(userData._id);
+          setUserData(userData);
+
+          const projectData = await fetchUserPublicProjects(otherId); // Fetch projects
+          console.log("Fetched projects:", projectData);
+          setUserProjects(projectData);
+        }
+				else {
+          console.log("Fetching user with ID:", loggedinId);
+          const userData = await fetchUserById(loggedinId); 
+          if (!userData) throw new Error("User not found");
+          setUserId(userData._id);
+          setUserData(userData);
+
+          const projectData = await fetchUserProjects(loggedinId); // Fetch projects
+          console.log("Fetched projects:", projectData);
+          setUserProjects(projectData);
+        }
 
 			} catch (error) {
 					console.error("Error fetching user data:", error);
@@ -45,7 +74,7 @@ const ViewProfile = ({ route }) => {
       }
 		};
 		getUserData();
-	}, [userId, route.params?.forceRefresh]);
+	}, [userId, route.params?.forceRefresh, otherId]);
 
   const avatarImages = {
     0: require("../../assets/img/avatars/avatar1.png"),
@@ -54,25 +83,6 @@ const ViewProfile = ({ route }) => {
     3: require("../../assets/img/avatars/avatar4.png"),
     4: require("../../assets/img/avatars/avatar5.png"),
   };
-
-  // useEffect(() => {
-  //   const loadUser = async () => {
-  //     try {
-  //       setLoading(true);
-  //       setError(null); // Reset error state
-  //       const user = await fetchUserById(userId);
-  //       if (user) setUserData(user);
-  //       else setError("User not found");
-  //     } catch (error) {
-  //       console.error("Error fetching user:", error);
-  //       setError("Failed to load user data");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
-
-  //   loadUser();
-  // }, [userId, route.params?.forceRefresh]);
 
   const handleLinkPress = async () => {
     const url = userData.linkedin;
@@ -97,10 +107,88 @@ const ViewProfile = ({ route }) => {
       </View>
     );
   }
+  const handleSendInvite =async() => {
+    try {
+      console.log("Invite sender (loggedinId):", loggedinId);
+      console.log("Invite receiver (otherId):", otherId);
+      console.log("Project ID:", projectId);
+
+      const token = await AsyncStorage.getItem('token') ;
+      console.log(`Token : ${token}`) ;
+      if(!token) return Alert.alert("Unauthorized!" , "Please log in") ;
+
+      console.log("Sending invites from frontend !") ;
+      await sendInviteAPI(projectId , otherId , token) ;
+      Alert.alert("Invite Sent !" , "User has been invited to this project")
+    }catch(error){
+      const errorMessage = error?.response?.data?.message || "Failed to send invite" ;
+      Alert.alert("Error" , errorMessage) ;
+    }
+  }
+  const gotoViewProject = (project) => {
+    if (otherId) {
+      navigation.navigate('ViewProject', { projectType: "publicProjects", project, userId: loggedinId, fromSearch: true });
+    } else {
+      navigation.navigate('ViewProject', { projectType: "publicProjects", project, userId: loggedinId, fromSearch: false });
+    }
+  }
+
+  // const handleAcceptApplication = async () => {
+  //   try {
+  //     setIsApplying(true);
+  //     const notificationId = route.params?.notificationId;
+      
+  //     if (!notificationId) {
+  //       Alert.alert("Error", "Notification ID not found");
+  //       return;
+  //     }
+  //     const response = await acceptApplication(projectApplication._id, userId, notificationId);
+      
+  //     const fetchedMembers = await fetchProjectMembers(projectApplication._id);
+  //     setMemberUsers(fetchedMembers);
+      
+  //     Alert.alert("Success", response?.msg || "Successfully joined the project!");
+      
+  //     navigation.navigate("Notification", { userId });
+  //   } catch (error) {
+  //     Alert.alert("Error", error.message || "Failed to accept invitation.");
+  //   } finally {
+  //     setIsApplying(false);
+  //   }
+  // };
+
+  const handleAcceptApplication = async () => {
+    try {
+      setIsApplying(true);
+      const notificationId = route.params?.notificationId;
+      if (!notificationId) {
+        Alert.alert("Error", "Notification ID not found");
+        return;
+      }
+      const response = await acceptApplication(projectApplication._id, otherId, notificationId);
+      Alert.alert("Success", response?.msg || "Successfully accepted application!");
+      navigation.navigate("Notification", { userId: loggedinId });
+    } catch (error) {
+      Alert.alert("Error", error.message || "Failed to accept application.");
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
+	const renderItem = ({ item }) => (
+    <TouchableOpacity 
+      style={styles.card}
+      onPress={() => gotoViewProject(item)}
+    >
+			<Text style={styles.cardText}>{item.title}</Text>
+			<Text style={styles.subText}>{item.domain}</Text>
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <Navbar2 title="Profile" userId={userId}/>
+      {/* <Navbar2 title="Profile" userId={userId}/> */}
+      <Navbar2 route={{ params: { title: "Profile", userId: loggedinId, otherId, fromSearch, fromProject, projectId, fromSearchFilters } }} />
       
       <ScrollView contentContainerStyle={{ padding: 15 }}>
         <View style={styles.headerContainer}>
@@ -124,15 +212,45 @@ const ViewProfile = ({ route }) => {
 
         </View>
 
-        <TouchableOpacity 
-          style={styles.editProfileButton} 
-          onPress={() => navigation.navigate("EditProfile", { userId })}
-        >
-          <Text style={styles.editProfileText}>Edit Profile</Text>
-        </TouchableOpacity>
+        { !otherId && (
+          <TouchableOpacity 
+            style={styles.editProfileButton} 
+            onPress={() => navigation.navigate("EditProfile", { userId: loggedinId })}
+          >
+            <Text style={styles.editProfileText}>Edit Profile</Text>
+          </TouchableOpacity>
+        )}
+
+        { (otherId && fromProject && projectId && !fromNotification) && (
+          <TouchableOpacity 
+            style={styles.editProfileButton} onPress={() => handleSendInvite()}
+            // onPress={() => navigation.navigate("EditProfile", { userId: loggedinId })}
+          >
+            <Text style={styles.editProfileText}>Send Invite</Text>
+          </TouchableOpacity>
+        )}
+
+        { (fromNotification) && (
+          <TouchableOpacity 
+            style={styles.editProfileButton} onPress={handleAcceptApplication}
+            // onPress={() => navigation.navigate("EditProfile", { userId: loggedinId })}
+          >
+            <Text style={styles.editProfileText}>Accept Application</Text>
+          </TouchableOpacity>
+        )}
+
+				<FlatList
+          horizontal
+          data={userProjects.sort(() => Math.random() - 0.5).slice(0, 6)}
+          renderItem={renderItem}
+          keyExtractor={(item) => item._id.toString()} // Ensure unique key
+        />
+
       </ScrollView>
 
-      <Footer page="profile" userId={userId}/>
+      {/* <Footer page="profile" userId={userId}/> */}
+      {/* <Footer route={{ params: { page: "profile", userId: loggedinId, otherId: otherId } }} /> */}
+      <Footer route={{ params: { page: otherId ? "search" : "profile", userId: loggedinId, otherId } }} />
     </SafeAreaView>
   );
 };
@@ -188,7 +306,7 @@ const styles = {
     alignSelf: "center",
     width: "50%",
     alignItems: "center",
-    marginTop: 20,
+    marginVertical: 20,
   },
   editProfileText: {
     color: "#FFF",
@@ -197,6 +315,27 @@ const styles = {
   linkText: {
     color: "blue",
     textDecorationLine: "underline",
+  },
+	card: {
+    backgroundColor: "#E6E6FA",
+    padding: 20,
+    borderRadius: 15,
+    alignItems: "center",
+    marginRight: 15,
+    width: 160,
+    height: 200,
+    justifyContent: "center",
+	},
+  cardText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  subText: {
+    fontSize: 14,
+    color: "gray",
+    textAlign: "center",
+    marginTop: 10,
   },
 };
 

@@ -16,4 +16,3 @@ router.get("/viewAnswers/:questionId",viewAnswerController);
 router.use(errorHandler);
 
 export default router;
-

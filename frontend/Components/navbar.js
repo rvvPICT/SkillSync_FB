@@ -13,9 +13,9 @@ import {
 	Animated
 } from 'react-native'
 
-const Navbar = (props) => {
+const Navbar = ({ route }) => {
 
-	const { userId } = props;
+	const { userId } = route.params;
 
 	const navigation = useNavigation();
 
@@ -43,7 +43,7 @@ const Navbar = (props) => {
 				</Pressable>
 				<Pressable
 					onPress={() => {
-						navigation.navigate("Notification");
+						navigation.navigate("Notification" ,{userId});
 					}}
 					style={({ pressed }) => [
 						{opacity: pressed ? 0.5 : 1.0},

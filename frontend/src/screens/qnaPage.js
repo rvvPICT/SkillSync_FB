@@ -359,7 +359,8 @@ const QnAPage = ({ route }) => {
         style={styles.fab}
         onPress={() => navigation.navigate("AskQuestion", { userId })}
       >
-        <Icon name="add" size={30} color="#7164b4" />
+        {/* <Icon name="add" size={30} color="#7164b4" /> */}
+        <Text style={{fontSize: 40, color: "#7164b4" }}>+</Text>
       </TouchableOpacity>
 
       <Footer route={{ params: { page: "qna", userId } }} />

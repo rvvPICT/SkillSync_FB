@@ -4,17 +4,17 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // const API_URL = "http://10.0.2.2:5001/api/users";
 
-const API_URL = Platform.OS === 'ios' 
-    ? 'http://localhost:5001/api/users' 
-    : 'http://10.0.2.2:5001/api/users';
+// const API_URL = Platform.OS === 'ios' 
+//     ? 'http://localhost:5001/api/users' 
+//     : 'http://10.0.2.2:5001/api/users';
 
 // const API_URL = Platform.OS === 'ios' 
 //     ? 'http://localhost:5001/api/users' 
 //     : 'http://192.168.0.101:5001/api/users';
 
-// const API_URL = Platform.OS === 'ios' 
-//     ? 'http://localhost:5001/api/users' 
-//     : 'http://192.168.241.129:5001/api/users';
+const API_URL = Platform.OS === 'ios' 
+    ? 'http://localhost:5001/api/users' 
+    : 'http://192.168.208.220:5001/api/users';
 
 const getAuthHeaders = async () => {
     const token = await AsyncStorage.getItem("authToken");

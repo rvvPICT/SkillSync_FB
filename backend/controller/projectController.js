@@ -42,6 +42,7 @@ export const addProjectController = async (req, res) => {
             requiredSkills,
             isPublic,
             teamSize,
+            availableSlots: teamSize-1,
             deadline,
             owner: userId,
             members: [userId],
@@ -225,7 +226,7 @@ export const getProjectMembers = async (req, res) => {
   };
 
 
-	export const applyForProject = async(req, res) => {
+export const applyForProject = async(req, res) => {
     try {
         const { projectId, userId } = req.body;
         

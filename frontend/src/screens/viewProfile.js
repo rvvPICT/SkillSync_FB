@@ -368,6 +368,7 @@ import {
   acceptApplication,
 } from "../services/projects_api.js";
 import { fetchUserById } from "../services/users_api.js";
+import { updateNotificationStatus } from "../services/notification_api.js";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -443,22 +444,75 @@ const ViewProfile = ({ route }) => {
     }
   };
 
+  // const handleAcceptApplication = async () => {
+  //   try {
+  //     setIsApplying(true);
+  //     const notificationId = route.params?.notificationId;
+  //     if (!notificationId) {
+  //       Alert.alert("Error", "Notification ID not found");
+  //       return;
+  //     }
+  //     const response = await acceptApplication(
+  //       projectApplication._id,
+  //       otherId,
+  //       notificationId
+  //     );
+  //     Alert.alert("Success", response?.msg || "Successfully accepted application!");
+  //     navigation.navigate("Notification", { userId: loggedinId });
+  //   } catch (error) {
+  //     Alert.alert("Error", error.message || "Failed to accept application.");
+  //   } finally {
+  //     setIsApplying(false);
+  //   }
+  // };
+
   const handleAcceptApplication = async () => {
     try {
       setIsApplying(true);
       const notificationId = route.params?.notificationId;
+      
       if (!notificationId) {
         Alert.alert("Error", "Notification ID not found");
         return;
       }
+      
+      // Log the operation details for debugging
+      console.log("Accepting application details:");
+      console.log("- Notification ID:", notificationId);
+      console.log("- Project ID:", projectApplication._id);
+      console.log("- Applicant ID:", otherId);
+      
+      // Call the acceptApplication API function
       const response = await acceptApplication(
-        projectApplication._id,
-        otherId,
+        projectApplication._id, 
+        otherId, 
         notificationId
       );
-      Alert.alert("Success", response?.msg || "Successfully accepted application!");
+      
+      if (!response) {
+        throw new Error("No response received from server");
+      }
+      
+      if (response.error) {
+        throw new Error(response.error);
+      }
+      
+      // Update notification status as well
+      await updateNotificationStatus(notificationId, 'accepted');
+      
+      Alert.alert(
+        "Success", 
+        response?.msg || "Successfully accepted application!"
+      );
+      
+      // Navigate back to notifications
       navigation.navigate("Notification", { userId: loggedinId });
     } catch (error) {
+      console.error("Error accepting application:", error);
+      // Log more details about the error
+      if (error.response) {
+        console.error("Server responded with:", error.response.status, error.response.data);
+      }
       Alert.alert("Error", error.message || "Failed to accept application.");
     } finally {
       setIsApplying(false);
@@ -466,11 +520,6 @@ const ViewProfile = ({ route }) => {
   };
 
   const handleLogout = async () => {
-    // await AsyncStorage.removeItem("token");
-    // navigation.reset({
-    //   index: 0,
-    //   routes: [{ name: "Login" }],
-    // });
     Alert.alert("Logout", "You have been logged out successfully.");
     navigation.navigate("SignIn");
   };
@@ -622,122 +671,6 @@ const ViewProfile = ({ route }) => {
   );
 };
 
-// const styles = {
-//   loadingContainer: {
-//     flex: 1,
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   // logoutButton: {
-//   //   position: "absolute",
-//   //   top: 750,
-//   //   right: 15,
-//   //   zIndex: 10,
-//   //   backgroundColor: "#F3F0FF",
-//   //   paddingVertical: 6,
-//   //   paddingHorizontal: 12,
-//   //   borderRadius: 12,
-//   //   elevation: 2,
-//   // },
-
-//   logoutButton: {
-//     position: "absolute",
-//     top: 287,
-//     right: 15,
-//     zIndex: 10,
-//     backgroundColor: "#F3F0FF",
-//     width: 50, // Adjust the size as needed
-//     height: 50, // Keep width and height the same to make it circular
-//     borderRadius: 25, // Half of the width/height value
-//     elevation: 2,
-//     justifyContent: 'center',
-//     alignItems: 'center', // To center the logout text/icon
-//   },
-  
-//   logoutText: {
-//     fontSize: 14,
-//     color: "#7164B4",
-//     fontWeight: "600",
-//   },
-//   headerContainer: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     justifyContent: "space-between",
-//     paddingVertical: 15,
-//   },
-//   userInfo: {
-//     flex: 1,
-//     paddingRight: 10,
-//   },
-//   username: {
-//     fontSize: 18,
-//     fontWeight: "bold",
-//   },
-//   bio: {
-//     fontSize: 14,
-//     color: "#666",
-//     marginTop: 5,
-//   },
-//   skills: {
-//     fontSize: 14,
-//     color: "#333",
-//     marginTop: 5,
-//   },
-//   profilePicContainer: {
-//     width: 86,
-//     height: 86,
-//     borderRadius: 43,
-//     borderWidth: 2,
-//     borderColor: "#7164B4",
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   profilePic: {
-//     width: 75,
-//     height: 80,
-//     borderRadius: 40,
-//   },
-//   editProfileButton: {
-//     backgroundColor: "#7164B4",
-//     padding: 10,
-//     borderRadius: 5,
-//     alignSelf: "center",
-//     width: "50%",
-//     alignItems: "center",
-//     marginVertical: 20,
-//   },
-//   editProfileText: {
-//     color: "#FFF",
-//     fontWeight: "bold",
-//   },
-//   linkText: {
-//     color: "blue",
-//     textDecorationLine: "underline",
-//   },
-//   card: {
-//     backgroundColor: "#E6E6FA",
-//     padding: 20,
-//     borderRadius: 15,
-//     alignItems: "center",
-//     marginRight: 15,
-//     width: 160,
-//     height: 200,
-//     justifyContent: "center",
-//   },
-//   cardText: {
-//     fontSize: 18,
-//     fontWeight: "bold",
-//     textAlign: "center",
-//   },
-//   subText: {
-//     fontSize: 14,
-//     color: "gray",
-//     textAlign: "center",
-//     marginTop: 10,
-//   },
-// };
-
-
 const styles = {
   loadingContainer: {
     flex: 1,
@@ -853,3 +786,119 @@ const styles = {
 };
 
 export default ViewProfile;
+
+// const styles = {
+//   loadingContainer: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   // logoutButton: {
+//   //   position: "absolute",
+//   //   top: 750,
+//   //   right: 15,
+//   //   zIndex: 10,
+//   //   backgroundColor: "#F3F0FF",
+//   //   paddingVertical: 6,
+//   //   paddingHorizontal: 12,
+//   //   borderRadius: 12,
+//   //   elevation: 2,
+//   // },
+
+//   logoutButton: {
+//     position: "absolute",
+//     top: 287,
+//     right: 15,
+//     zIndex: 10,
+//     backgroundColor: "#F3F0FF",
+//     width: 50, // Adjust the size as needed
+//     height: 50, // Keep width and height the same to make it circular
+//     borderRadius: 25, // Half of the width/height value
+//     elevation: 2,
+//     justifyContent: 'center',
+//     alignItems: 'center', // To center the logout text/icon
+//   },
+  
+//   logoutText: {
+//     fontSize: 14,
+//     color: "#7164B4",
+//     fontWeight: "600",
+//   },
+//   headerContainer: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     justifyContent: "space-between",
+//     paddingVertical: 15,
+//   },
+//   userInfo: {
+//     flex: 1,
+//     paddingRight: 10,
+//   },
+//   username: {
+//     fontSize: 18,
+//     fontWeight: "bold",
+//   },
+//   bio: {
+//     fontSize: 14,
+//     color: "#666",
+//     marginTop: 5,
+//   },
+//   skills: {
+//     fontSize: 14,
+//     color: "#333",
+//     marginTop: 5,
+//   },
+//   profilePicContainer: {
+//     width: 86,
+//     height: 86,
+//     borderRadius: 43,
+//     borderWidth: 2,
+//     borderColor: "#7164B4",
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   profilePic: {
+//     width: 75,
+//     height: 80,
+//     borderRadius: 40,
+//   },
+//   editProfileButton: {
+//     backgroundColor: "#7164B4",
+//     padding: 10,
+//     borderRadius: 5,
+//     alignSelf: "center",
+//     width: "50%",
+//     alignItems: "center",
+//     marginVertical: 20,
+//   },
+//   editProfileText: {
+//     color: "#FFF",
+//     fontWeight: "bold",
+//   },
+//   linkText: {
+//     color: "blue",
+//     textDecorationLine: "underline",
+//   },
+//   card: {
+//     backgroundColor: "#E6E6FA",
+//     padding: 20,
+//     borderRadius: 15,
+//     alignItems: "center",
+//     marginRight: 15,
+//     width: 160,
+//     height: 200,
+//     justifyContent: "center",
+//   },
+//   cardText: {
+//     fontSize: 18,
+//     fontWeight: "bold",
+//     textAlign: "center",
+//   },
+//   subText: {
+//     fontSize: 14,
+//     color: "gray",
+//     textAlign: "center",
+//     marginTop: 10,
+//   },
+// };
+

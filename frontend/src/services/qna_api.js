@@ -1,8 +1,14 @@
 import axios from "axios";
 import { Platform } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import BASE_URL from './config.js';
 
 // const API_URL = "http://10.0.2.2:5001/api/qna";
+
+// const API_URL = "http://192.168.0.103:5001/api/qna";
+// const API_URL = "http://192.0.0.2:5001/api/qna";
+
+const API_URL = `${BASE_URL}/qna`;
 
 
 // const API_URL = Platform.OS === 'ios' 
@@ -11,11 +17,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // const API_URL = Platform.OS === 'ios' 
 //     ? 'http://localhost:5001/api/qna' 
-//     : 'http://192.168.0.101:5001/api/qna';
+//     : 'http://192.168.0.103:5001/api/qna';
 
-const API_URL = Platform.OS === 'ios' 
-    ? 'http://localhost:5001/api/qna' 
-    : 'http://192.168.208.220:5001/api/qna';
+// const API_URL = Platform.OS === 'ios' 
+//     ? 'http://localhost:5001/api/qna' 
+//     : 'http://192.168.208.220:5001/api/qna';
 
 // Signup API
 export const postQuestion = async (questionData) => {

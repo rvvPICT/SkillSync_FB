@@ -1,16 +1,12 @@
 import axios from 'axios' ;
 import { Platform } from 'react-native';
+import BASE_URL from './config.js';
 
-//import notifications from '../../../backend/models/notifications';
-// const BASE_URL = "http://10.0.2.2:5001/api/notifications" ;
 
-// const API_URL = Platform.OS === 'ios' 
-//     ? 'http://localhost:5001/api/notifications' 
-//     : 'http://10.0.2.2:5001/api/notifications';
+// const API_URL = "http://192.168.0.103:5001/api/notifications";
+// const API_URL = "http://192.0.0.2:5001/api/notifications";
+const API_URL = `${BASE_URL}/notifications`;
 
-const API_URL = Platform.OS === 'ios' 
-    ? 'http://localhost:5001/api/notifications' 
-    : 'http://192.168.208.220:5001/api/notifications';
 
 export const fetchUserNotifications = async (userId) => {
     console.log("In notification api page") ;
@@ -28,7 +24,7 @@ export const updateNotificationStatus = async (notificationId , status) => {
 };
 
 export const createNotification = async (notificationData) => {
-    try {
+  try {
       console.log("In notification api page") ;
       const response = await axios.post(`${API_URL}/create`, notificationData);
       return response.data;
@@ -41,5 +37,22 @@ export const createNotification = async (notificationData) => {
         "Failed to create notification"
       );
     }
-  };
-  
+};
+export const deleteNotification = async (notificationId, userId) => {
+  try {
+    console.log("API: Deleting notification:", notificationId, "for user:", userId);
+    
+    const response = await axios.delete(`${API_URL}/${notificationId}`, {
+      data: { userId: userId }, // Make sure userId is properly named in the object
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    
+    console.log("API: Delete response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting notification:', error?.response?.data || error.message);
+    throw error;
+  }
+};

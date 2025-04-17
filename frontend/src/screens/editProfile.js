@@ -12,7 +12,8 @@ import {
   Dimensions,
   ActivityIndicator,
   StyleSheet,
-  Alert
+  Alert,
+  Platform
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
@@ -171,7 +172,7 @@ const EditProfile = ({ route }) => {
             <ActivityIndicator size="large" color="#7164B4" />
           </View>
         ) : (
-          <ScrollView>
+          <ScrollView nestedScrollEnabled={true}>
             <View style={{ padding: 20, backgroundColor: "#F1F1F6", flex: 1 }}>
               <View style={{ alignItems: "center", marginBottom: 20 }}>
                 {/* Avatar Selection Modal */}
@@ -223,7 +224,7 @@ const EditProfile = ({ route }) => {
               <Text>Phone Number</Text>
               <TextInput style={styles.input} value={phone} onChangeText={setPhone} />
 
-              <Text>Gender</Text>
+              {/* <Text>Gender</Text>
               <View style={styles.pickerContainer}>
                 <Picker
                   selectedValue={gender}
@@ -235,7 +236,23 @@ const EditProfile = ({ route }) => {
                   <Picker.Item label="Female" value="Female" />
                   <Picker.Item label="Other" value="Other" />
                 </Picker>
+              </View> */}
+
+              <Text>Gender</Text>
+              <View style={[styles.pickerContainer, Platform.OS === 'ios' && { height: 150 }]}>
+                <Picker
+                  selectedValue={gender}
+                  onValueChange={(itemValue) => setGender(itemValue)}
+                  style={styles.picker}
+                  itemStyle={{ height: 150 }}
+                >
+                  <Picker.Item label="Select Gender" value="" />
+                  <Picker.Item label="Male" value="Male" />
+                  <Picker.Item label="Female" value="Female" />
+                  <Picker.Item label="Prefer not to say" value="Prefer not to say" />
+                </Picker>
               </View>
+
 
               <Text>Location</Text>
               <TextInput style={styles.input} value={location} onChangeText={setLocation} />

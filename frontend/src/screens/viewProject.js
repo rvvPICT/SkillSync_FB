@@ -45,20 +45,6 @@ const ViewProject = ({ route }) => {
   }, [project]);
 
 
-
-  // const handleApply = async () => {
-  //   try {
-  //     console.log("Project Id :" ,project._id ) ;
-  //     console.log("Owner Id :" , project.owner) ;
-  //     console.log("Sender Id :" , userId) ;
-
-  //     const response = await apply(project._id, userId);
-  //     Alert.alert("Success", response?.data?.msg || "Successfully applied for the project!");
-  //   } catch (error) {
-  //     Alert.alert("Error", error.message || "Failed to apply.");
-  //   }
-  // };
-
   const handleApply = async () => {
     try {
       setIsApplying(true);
@@ -107,6 +93,11 @@ const ViewProject = ({ route }) => {
       setIsApplying(false);
     }
   };
+
+  const getUsername = async (userId) => {
+    const ownerName = await fetchUserById(userId);
+    return ownerName?.username || "Unknown User";
+  }
   
 
   const navigateToMemberProfile = (memberId) => {
@@ -139,6 +130,9 @@ const ViewProject = ({ route }) => {
             )}
           </Text>
 
+          <Text style={styles.detailLabel}>Owner of the Project:</Text>
+          <Text style={styles.details}>{getUsername(project.owner)}</Text>
+
           <Text style={styles.detailLabel}>Total Members:</Text>
           <Text style={styles.details}>{project.teamSize}</Text>
 
@@ -170,7 +164,7 @@ const ViewProject = ({ route }) => {
           <Text style={styles.detailLabel}>Deadline for Project:</Text>
           <Text style={styles.details}>{project.deadline}</Text>
 
-          {(projectType === "publicProjects" && !project.members?.includes(userId) && project.availableSlots && !fromNotification) && (
+          {(projectType === "publicProjects" && !project.members?.includes(userId)  && !fromNotification) && (
             <TouchableOpacity style={styles.applyBtn} onPress={handleApply} disabled={isApplying}>
               <Text style={styles.buttonTextLight}>
                 {isApplying ? "Applying..." : "Apply"}

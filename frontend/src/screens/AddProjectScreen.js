@@ -63,10 +63,6 @@ const AddProjectScreen = ({ route }) => {
   };
 
   const handleSubmit = async () => {
-    // if (!title.trim() || !description.trim() || !domain.trim() || !requiredSkills.length || !teamSize) {
-    //   Alert.alert("Error", "Please fill in all fields before submitting.");
-    //   return;
-    // }
 
     console.log("DEBUG VALUES:", { title, description, domain, requiredSkills, teamSize });
 
@@ -82,50 +78,6 @@ const AddProjectScreen = ({ route }) => {
       Alert.alert("Error", "Please fill in all fields before submitting.");
       return;
     }
-    
-
-    // try {
-    //   console.log("User ID in AddProjectScreen:", userId);
-
-    //   const projectData = {
-    //     title,
-    //     description,
-    //     domain,
-    //     requiredSkills,
-    //     isPublic,
-    //     teamSize,
-    //     deadline,
-    //   };
-      
-    //   const response = await addProject(userId, projectData);
-    //   console.log("Added a Project : ", response);
-      
-    //   if (!response.error) {
-    //     console.log("Route params:", route.params);
-    //     navigation.navigate("Home", { 
-    //       userId, 
-    //       forceRefresh: Date.now() // Add a timestamp to force re-fetch
-    //     });
-        
-    //     Alert.alert("Success", "Project Added successfully!");
-    //   } else {
-    //     Alert.alert("Add Project Failed", response.error);
-    //   }
-    // } catch (error) {
-    //   console.error("Add Project Failed:", error);
-    //   Alert.alert("Add Project Failed", "An unexpected error occurred. Please try again.");
-    // }
-  
-    // console.log({ title, description, domain, requiredSkills, isPublic, teamSize, deadline });
-  
-    // // Reset form fields
-    // setTitle("");
-    // setDescription("");
-    // setDomain("");
-    // setRequiredSkills([]);
-    // setIsPublic(true);
-    // setTeamSize(1);
-    // setDeadline(tomorrow);
 
     try {
       const projectData = {

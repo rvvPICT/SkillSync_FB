@@ -217,7 +217,7 @@
 
 
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator } from "react-native";
+import { SafeAreaView, View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from '@expo/vector-icons';
 import Navbar2 from "../../Components/navbar2";
@@ -376,7 +376,7 @@ const SearchPage = ({ route }) => {
     <SafeAreaView style={{ flex: 1 }}>
       <Navbar2 route={{ params: { title: "Search", userId: loggedinId } }} />
       
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <TouchableOpacity onPress={() => handleSearchFilterPress('mentors')}>
           <Text style={styles.heading}>Search for Mentor</Text>
         </TouchableOpacity>
@@ -424,7 +424,7 @@ const SearchPage = ({ route }) => {
             </View>
           }
         />
-      </View>
+      </ScrollView>
       
       <Footer route={{ params: { page: "search", userId: loggedinId } }} />
     </SafeAreaView>

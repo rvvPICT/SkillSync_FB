@@ -583,6 +583,9 @@ const ViewProfile = ({ route }) => {
         <View style={styles.headerContainer}>
           <View style={styles.userInfo}>
             <Text style={styles.username}>{userData.username}</Text>
+            {userData.gender && userData.gender !== "Prefer not to say" && (
+              <Text style={styles.bio}>{userData.gender}</Text>
+            )}
             <Text style={styles.bio}>{userData.bio || "No bio available"}</Text>
             <Text style={styles.skills}>
               {userData.skills.length > 0

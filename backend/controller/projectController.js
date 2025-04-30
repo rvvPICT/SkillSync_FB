@@ -97,61 +97,40 @@ export const getMyPublicProjectsController = async (req, res) => {
     }
 };
 
-// export const sendInvite= async (req,res) =>{
+// // In projectController.js
+// export const sendInvite = async (req, res) => {
 //     try {
-//         console.log("Checkpt1") ;
-//         const {projectId , userIdToInvite } = req.body ;
-//         const ownerId = req.user.userId ;
-
-//         const project = await Project.findOne({_id:projectId}) ;
-//         console.log("OwnerId :" , ownerId) ;
-//         console.log("ProjectId :" , projectId) ;
-//         console.log("Sending invitation to :" , userIdToInvite) ;
-
-//         const ownerName = User.findById(ownerId) ;
-//         const NewNotification = new Notification({
-//             type : 'invite' ,
-//             sender : ownerId ,
-//             receiver : userIdToInvite ,
-//             project : project ,
-//             message : `${ownerName} is inviting you to join the project : ${project.title}`
-//         })
-
-//         await NewNotification.save() ;
-//         console.log("Invite notification saved succesfully !") ;
-
-//         await User.findByIdAndUpdate(
-//             userIdToInvite ,
-//             { $push: { mynotifications: NewNotification._id } },
-//             { new: true }
-//           );
-//           console.log("Notification pushed to owner's user model");
-
-//         if(!project){
-//            return  res.status(404).json({message:"Project Not found !"}) ;
+//         // Add these debug logs
+//         console.log("Full request user object:", JSON.stringify(req.user));
+        
+//         const {projectId, userIdToInvite} = req.body;
+        
+//         // Use a fallback approach to get the user ID
+//         // This covers various common property names for user ID in JWT tokens
+//         const ownerId = req.user.userId || req.user._id || req.user.id || req.user.user_id;
+        
+//         console.log("Extracted ownerId:", ownerId);
+//         console.log("Project ID:", projectId);
+//         console.log("User to invite:", userIdToInvite);
+  
+//         const project = await Project.findOne({_id: projectId});
+        
+//         if (!project) {
+//             return res.status(404).json({message: "Project Not found!"});
 //         }
-
-//         if(!project.owner.equals(ownerId)){
-//             return res.status(403).json({message: "Only owner of the project can send invites "}) ;
+  
+//         console.log("OwnerId", ownerId);
+//         if (!project.owner.equals(ownerId)) {
+//             return res.status(403).json({message: "Only owner of the project can send invites"});
 //         }
-
-//         const alreadyInvited = project.invites.find(invites=>
-//             invites.user.toString()=== userIdToInvite
-//         ) ;
-
-//         if(alreadyInvited){
-//             return res.status(400).json({message : "User already invited !"});
-//         }
-
-//         project.invites.push({user:userIdToInvite , status : "pending"}) ;
-//         await project.save() ;
-
-//         return res.status(200).json({message : "Invite sent succesfully !"}) ;
-//     }catch(error){
-//         console.log("Error in sending invite :" , error) ;
-//         return res.status(500).json({message : "Server errror "}) ;
+  
+//         // Rest of your function remains the same
+//         // ...
+//     } catch (error) {
+//         console.log("Error in sending invite:", error);
+//         return res.status(500).json({message: "Server error"});
 //     }
-// };
+//   };
 
 export const sendInvite = async (req, res) => {
   try {
@@ -164,6 +143,7 @@ export const sendInvite = async (req, res) => {
           return res.status(404).json({message: "Project Not found!"});
       }
 
+      console.log("OwnerId", ownerId);
       if (!project.owner.equals(ownerId)) {
           return res.status(403).json({message: "Only owner of the project can send invites"});
       }

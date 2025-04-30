@@ -158,6 +158,8 @@
 //                   otherId: item._id,
 //                   fromSearch: true,
 //                   fromSearchFilters: true,
+//                   fromProject,
+//                   projectId,
 //                 });
 //               }
 //             }}
@@ -166,14 +168,14 @@
 //           </TouchableOpacity>
           
 //           {/* Send invite button - only show for users when fromProject is true */}
-//           {fromProject && projectId && (
+//           {/* {fromProject && projectId && (
 //             <TouchableOpacity 
 //               style={styles.inviteBtn}
 //               onPress={() => handleSendInvite(item._id)}
 //             >
 //               <Text style={styles.btnText}>Send Invite</Text>
 //             </TouchableOpacity>
-//           )}
+//           )} */}
 //         </View>
 //       </View>
 //     );
@@ -289,7 +291,7 @@
 //   },
 //   accordionContainer: {
 //     marginBottom: 10,
-//     maxHeight: 300, // Limit height to prevent taking too much space
+//     maxHeight: "30%",
 //   },
 //   card: {
 //     padding: 20,
@@ -388,6 +390,7 @@
 // export default SearchFilters;
 
 
+
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
 import Navbar2 from "../../Components/navbar2";
@@ -420,7 +423,6 @@ const SearchFilters = ({ route }) => {
   // Get userId from route params
   const loggedinId = userId;
 
-  // Debug logging
   useEffect(() => {
     console.log("📱 SearchFilters - Received route params:", route.params);
     console.log("📱 SearchFilters - Using userId:", loggedinId);
@@ -556,16 +558,6 @@ const SearchFilters = ({ route }) => {
           >
             <Text style={styles.btnText}>View {type === "project" ? "Project" : "Profile"}</Text>
           </TouchableOpacity>
-          
-          {/* Send invite button - only show for users when fromProject is true */}
-          {/* {fromProject && projectId && (
-            <TouchableOpacity 
-              style={styles.inviteBtn}
-              onPress={() => handleSendInvite(item._id)}
-            >
-              <Text style={styles.btnText}>Send Invite</Text>
-            </TouchableOpacity>
-          )} */}
         </View>
       </View>
     );
@@ -612,6 +604,7 @@ const SearchFilters = ({ route }) => {
           {type === "project" ? "Filter by Domain:" : "Filter by Skills:"}
         </Text>
         
+        {/* Fixed height container for the accordion */}
         <View style={styles.accordionContainer}>
           {type === "project" ? (
             <DomainAccordion 
@@ -626,27 +619,30 @@ const SearchFilters = ({ route }) => {
           )}
         </View>
         
-        <Text style={styles.resultLabel}>Results:</Text>
-        
-        {loading ? (
-          <View style={styles.loaderContainer}>
-            <ActivityIndicator size="large" color="#9370DB" />
-            <Text style={styles.loaderText}>Loading data...</Text>
-          </View>
-        ) : (
-          <FlatList
-            data={getFilteredData()}
-            keyExtractor={(item, index) => item._id?.toString() || item.id?.toString() || index.toString()}
-            renderItem={renderItem}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>
-                  No {type === "project" ? "projects" : type === "mentors" ? "mentors" : "team members"} found matching your criteria.
-                </Text>
-              </View>
-            }
-          />
-        )}
+        {/* Results section */}
+        <View style={styles.resultsSection}>
+          <Text style={styles.resultLabel}>Results:</Text>
+          
+          {loading ? (
+            <View style={styles.loaderContainer}>
+              <ActivityIndicator size="large" color="#9370DB" />
+              <Text style={styles.loaderText}>Loading data...</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={getFilteredData()}
+              keyExtractor={(item, index) => item._id?.toString() || item.id?.toString() || index.toString()}
+              renderItem={renderItem}
+              ListEmptyComponent={
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>
+                    No {type === "project" ? "projects" : type === "mentors" ? "mentors" : "team members"} found matching your criteria.
+                  </Text>
+                </View>
+              }
+            />
+          )}
+        </View>
       </View>
       
       <Footer route={{ params: { page: "search", userId: loggedinId } }} />
@@ -673,15 +669,18 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
+  accordionContainer: {
+    marginBottom: 10,
+    maxHeight: "30%", // Keep this constraint to prevent accordion from taking too much space
+  },
+  resultsSection: {
+    flex: 1, // This will take the remaining space
+    marginTop: 50,
+  },
   resultLabel: {
     fontSize: 16,
     fontWeight: "bold",
-    marginTop: 15,
     marginBottom: 10,
-  },
-  accordionContainer: {
-    marginBottom: 10,
-    maxHeight: 300, // Limit height to prevent taking too much space
   },
   card: {
     padding: 20,

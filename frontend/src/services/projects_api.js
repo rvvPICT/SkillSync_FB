@@ -1,6 +1,8 @@
 import axios from "axios";
 import { Platform } from 'react-native';
 import BASE_URL from './config.js';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 // const API_URL = "http://10.0.2.2:5001/api/projects"; // Emulator only
 
@@ -62,10 +64,19 @@ export const fetchUserProjects = async (userId) => {
     console.log("API response:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching user projects:", error.response?.data || error.message);
+    const message = error.response?.data?.message || error.message;
+
+    // If it's just "No projects found", treat it as empty list
+    if (message.includes("No projects found")) {
+      console.log("No projects for this user. Returning empty list.");
+      return [];
+    }
+
+    console.error("Error fetching user projects:", message);
     return [];
   }
 };
+
 
 export const fetchUserPublicProjects = async (userId) => {
   try {
@@ -90,18 +101,30 @@ export const fetchProjectMembers = async (projectId) => {
 };
 
 
-export const sendInvite = async (projectId , userToInvite , token) => {
+export const sendInvite = async (projectId, userToInvite) => {
   try {
-    console.log("In project_Api for sending invites !") ;
-    const res = await axios.post(`${API_URL}/invite` , {projectId , userIdToInvite:userToInvite} , {
-      headers : {
-        Authorization : `Bearer ${token}` ,
-      },
+    console.log("In project_Api for sending invites!");
+    const token = await AsyncStorage.getItem("authToken");
+    
+    if (!token) {
+      throw new Error("Authentication token not found");
     }
-  );
-  }catch(error){
-    console.log("Error in sending invite :" , error.response?.data || error.message) ;
-    throw error ;
+    
+    const res = await axios.post(
+      `${API_URL}/invite`, 
+      {projectId, userIdToInvite: userToInvite}, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      }
+    );
+    
+    return res.data;
+  } catch(error) {
+    console.log("Error in sending invite:", error.response?.data || error.message);
+    throw error;
   }
 };
 

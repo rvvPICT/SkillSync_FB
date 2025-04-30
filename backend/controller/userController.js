@@ -20,7 +20,9 @@ export const getAllUsersExceptLoggedIn = async (req, res, next) => {
         return res.status(400).json({ message: "Invalid user ID format" });
     }
     const users = await User.find({ _id: { $ne: loggedInUserId } });       
-    if (!users.length) return res.status(404).json({ message: "No other users found" });    
+    if (!users.length) {
+      return res.status(200).json([]);  // Return an empty array with a 200 status
+    }
     res.status(200).json(users);
   } catch (error) {
 	  next(error);

@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react'
+import { Dimensions } from 'react-native';
 
 import {
 	SafeAreaView,
@@ -19,6 +20,8 @@ const Footer = ({ route }) => {
 	const {page, userId, otherId=null} = route.params;
 	const navigation = useNavigation();
 	const [currentFooterIcon, setCurrentFooterIcon] = useState(page);
+	const [screenHeight, setScreenHeight] = useState(Dimensions.get('window').height);
+
 
 	useFocusEffect(
 		React.useCallback(() => {
@@ -31,7 +34,7 @@ const Footer = ({ route }) => {
 	);
 
   return (
-		<View style={[styles.footer]}>
+		<View style={[styles.footer, {height:0.07*screenHeight}]}>
 			<Pressable
 				onPress={() => {
 					if (currentFooterIcon != "home") navigation.navigate("Home", { userId });
@@ -41,7 +44,7 @@ const Footer = ({ route }) => {
 					{position: 'relative'}
 				]}
 			>
-				{currentFooterIcon === "home" && <View style={styles.ovalShadow}/>}
+				{currentFooterIcon === "home" && <View style={[styles.ovalShadow,  { top: 0.06*screenHeight }]}/>}
 				<Image
 					source={require('../assets/img/homepage/homepage_icon.png')}
 					style={[
@@ -59,7 +62,7 @@ const Footer = ({ route }) => {
 					{position: 'relative'}
 				]}
 			>
-				{currentFooterIcon === "search" && <View style={styles.ovalShadow}/>}
+				{currentFooterIcon === "search" && <View style={[styles.ovalShadow,  { top: 0.06*screenHeight }]}/>}
 				<Image
 					source={require('../assets/img/homepage/magnigier_icon.png')}
 					style={[
@@ -77,7 +80,7 @@ const Footer = ({ route }) => {
 					{position: 'relative'}
 				]}
 			>
-				{currentFooterIcon === "qna" && <View style={styles.ovalShadow}/>}
+				{currentFooterIcon === "qna" && <View style={[styles.ovalShadow,  { top: 0.06*screenHeight }]}/>}
 				<Image
 					source={require('../assets/img/homepage/QnA_icon.png')}
 					style={[
@@ -95,7 +98,7 @@ const Footer = ({ route }) => {
 					{position: 'relative'}
 				]}
 			>
-				{currentFooterIcon === "profile" && <View style={styles.ovalShadow}/>}
+				{currentFooterIcon === "profile" && <View style={[styles.ovalShadow,  { top: 0.06*screenHeight }]}/>}
 				<Image
 					source={require('../assets/img/homepage/user_icon.png')}
 					style={[
@@ -113,13 +116,11 @@ export default Footer
 
 const styles = StyleSheet.create({
 	footer:{
-		// backgroundColor:'#7164b4',
 		paddingHorizontal:15,
-		paddingBottom:15,
-		height:64,
+		// paddingBottom:15,
 		flexDirection:'row',
-		// alignItems:'center',
 		justifyContent:'space-between',
+
 	},
 	homepage_icon:{
 		width:40,
@@ -131,16 +132,14 @@ const styles = StyleSheet.create({
 		width:50,
 		height:5,
 		borderRadius:5,
-		bottom:'-20%',
+		// bottom:'-35%',
 		alignSelf: 'center',
 
-		// iOS Shadow
 		shadowColor: 'black',
 		shadowOpacity: 0.5,
 		shadowOffset: { width: 0, height: 2 },
 		shadowRadius: 1,
 	
-		// Android Shadow
 		elevation: 7, // Higher value for stronger blur effect
 	},
 })
